@@ -8,7 +8,11 @@ import { GlucoseChart } from '@/components/GlucoseChart';
 import { GlucoseInsights } from '@/components/GlucoseInsights';
 import { GlucoseDistribution } from '@/components/GlucoseDistribution';
 import { GlucoseCalendar } from '@/components/GlucoseCalendar';
-import { Activity, TrendingUp, AlertTriangle, Calendar } from 'lucide-react';
+import { GlucoseTable } from '@/components/GlucoseTable';
+import { GlucoseMetrics } from '@/components/GlucoseMetrics';
+import { GlucoseHeatmap } from '@/components/GlucoseHeatmap';
+import { GlucoseRecommendations } from '@/components/GlucoseRecommendations';
+import { Activity, TrendingUp, AlertTriangle, Calendar, BarChart3, Brain } from 'lucide-react';
 import { fetchGlucoseData, type GlucoseReading } from '@/utils/dataService';
 
 const Index = () => {
@@ -64,108 +68,153 @@ const Index = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-100 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Carregando dados de glicemia...</p>
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600 mx-auto mb-6"></div>
+          <p className="text-gray-600 text-lg">Carregando dados de glicemia...</p>
+          <p className="text-gray-500 text-sm mt-2">Preparando análises inteligentes...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-green-50">
       <div className="container mx-auto px-4 py-8">
-        {/* Header */}
+        {/* Header Modernizado */}
         <div className="mb-8 text-center">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2 flex items-center justify-center gap-3">
-            <Activity className="text-blue-600" size={36} />
+          <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-green-600 bg-clip-text text-transparent mb-4 flex items-center justify-center gap-3">
+            <Activity className="text-blue-600" size={48} />
             GlucoPulse Insights
           </h1>
-          <p className="text-gray-600 text-lg">
-            Monitoramento inteligente de glicemia
+          <p className="text-gray-600 text-xl max-w-2xl mx-auto leading-relaxed">
+            Plataforma inteligente para monitoramento e análise avançada de glicemia
           </p>
           {lastUpdate && (
-            <Badge variant="outline" className="mt-2">
-              Última atualização: {lastUpdate.toLocaleTimeString('pt-BR')}
-            </Badge>
+            <div className="mt-4 flex items-center justify-center gap-2">
+              <Badge variant="outline" className="bg-white/80 backdrop-blur-sm">
+                Última atualização: {lastUpdate.toLocaleTimeString('pt-BR')}
+              </Badge>
+              <Badge className="bg-green-100 text-green-800">
+                {glucoseData.length} registros carregados
+              </Badge>
+            </div>
           )}
         </div>
 
-        {/* Quick Stats */}
+        {/* Quick Stats Modernizados */}
         {stats && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300">
+            <Card className="bg-gradient-to-r from-blue-500 to-blue-600 text-white border-0 shadow-xl hover:shadow-2xl transition-all duration-300">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-gray-600">
+                <CardTitle className="text-sm font-medium text-blue-100">
                   Média Geral
                 </CardTitle>
-                <TrendingUp className="h-4 w-4 text-blue-600" />
+                <TrendingUp className="h-5 w-5 text-blue-200" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-gray-900">
+                <div className="text-3xl font-bold">
                   {stats.average.toFixed(0)} mg/dL
                 </div>
+                <p className="text-xs text-blue-100 mt-1">
+                  {stats.average < 140 ? 'Dentro da meta' : 'Acima da meta'}
+                </p>
               </CardContent>
             </Card>
 
-            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300">
+            <Card className="bg-gradient-to-r from-green-500 to-green-600 text-white border-0 shadow-xl hover:shadow-2xl transition-all duration-300">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-gray-600">
-                  Total de Registros
+                <CardTitle className="text-sm font-medium text-green-100">
+                  Registros Ativos
                 </CardTitle>
-                <Activity className="h-4 w-4 text-green-600" />
+                <Activity className="h-5 w-5 text-green-200" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-gray-900">
+                <div className="text-3xl font-bold">
                   {stats.total}
                 </div>
+                <p className="text-xs text-green-100 mt-1">
+                  Dados para análise
+                </p>
               </CardContent>
             </Card>
 
-            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300">
+            <Card className="bg-gradient-to-r from-red-500 to-red-600 text-white border-0 shadow-xl hover:shadow-2xl transition-all duration-300">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-gray-600">
-                  Valor Máximo
+                <CardTitle className="text-sm font-medium text-red-100">
+                  Pico Máximo
                 </CardTitle>
-                <AlertTriangle className="h-4 w-4 text-red-600" />
+                <AlertTriangle className="h-5 w-5 text-red-200" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-gray-900">
+                <div className="text-3xl font-bold">
                   {stats.max} mg/dL
                 </div>
+                <p className="text-xs text-red-100 mt-1">
+                  Valor mais alto registrado
+                </p>
               </CardContent>
             </Card>
 
-            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300">
+            <Card className="bg-gradient-to-r from-purple-500 to-purple-600 text-white border-0 shadow-xl hover:shadow-2xl transition-all duration-300">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-gray-600">
-                  Valor Mínimo
+                <CardTitle className="text-sm font-medium text-purple-100">
+                  Menor Valor
                 </CardTitle>
-                <Calendar className="h-4 w-4 text-orange-600" />
+                <Calendar className="h-5 w-5 text-purple-200" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-gray-900">
+                <div className="text-3xl font-bold">
                   {stats.min} mg/dL
                 </div>
+                <p className="text-xs text-purple-100 mt-1">
+                  Registro mínimo
+                </p>
               </CardContent>
             </Card>
           </div>
         )}
 
-        {/* Main Content */}
-        <Tabs defaultValue="dashboard" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-8 bg-white/80 backdrop-blur-sm">
-            <TabsTrigger value="dashboard" className="text-sm">Dashboard</TabsTrigger>
-            <TabsTrigger value="calendar" className="text-sm">Calendário</TabsTrigger>
-            <TabsTrigger value="insights" className="text-sm">Insights</TabsTrigger>
+        {/* Navegação Principal */}
+        <Tabs defaultValue="overview" className="w-full">
+          <TabsList className="grid w-full grid-cols-6 mb-8 bg-white/90 backdrop-blur-lg shadow-lg border-0 h-12">
+            <TabsTrigger value="overview" className="text-sm font-medium">
+              📊 Overview
+            </TabsTrigger>
+            <TabsTrigger value="metrics" className="text-sm font-medium">
+              🎯 Métricas
+            </TabsTrigger>
+            <TabsTrigger value="patterns" className="text-sm font-medium">
+              🔥 Padrões
+            </TabsTrigger>
+            <TabsTrigger value="table" className="text-sm font-medium">
+              📋 Tabela
+            </TabsTrigger>
+            <TabsTrigger value="calendar" className="text-sm font-medium">
+              📅 Calendário
+            </TabsTrigger>
+            <TabsTrigger value="insights" className="text-sm font-medium">
+              🧠 Insights
+            </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="dashboard" className="space-y-6">
+          <TabsContent value="overview" className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <GlucoseChart data={glucoseData} />
               <GlucoseDistribution data={glucoseData} />
             </div>
+          </TabsContent>
+
+          <TabsContent value="metrics">
+            <GlucoseMetrics data={glucoseData} />
+          </TabsContent>
+
+          <TabsContent value="patterns">
+            <GlucoseHeatmap data={glucoseData} />
+          </TabsContent>
+
+          <TabsContent value="table">
+            <GlucoseTable data={glucoseData} />
           </TabsContent>
 
           <TabsContent value="calendar">
@@ -173,7 +222,7 @@ const Index = () => {
           </TabsContent>
 
           <TabsContent value="insights">
-            <GlucoseInsights data={glucoseData} />
+            <GlucoseRecommendations data={glucoseData} />
           </TabsContent>
         </Tabs>
       </div>
