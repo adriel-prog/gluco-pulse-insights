@@ -45,20 +45,19 @@ export const GlucoseHeatmap = ({ data }: GlucoseHeatmapProps) => {
   });
 
   const getIntensityColor = (average: number, count: number) => {
-    if (count === 0) return 'bg-gray-100';
+    if (count === 0) return 'bg-muted/20';
     
-    if (average < 70) return 'bg-red-200';
-    if (average <= 100) return 'bg-green-200';
-    if (average <= 140) return 'bg-green-300';
-    if (average <= 180) return 'bg-yellow-300';
-    if (average <= 250) return 'bg-orange-300';
-    return 'bg-red-400';
+    if (average < 70) return 'bg-danger/80 text-white';
+    if (average <= 100) return 'bg-success/60 text-white';
+    if (average <= 140) return 'bg-success/40 text-foreground';
+    if (average <= 180) return 'bg-warning/60 text-foreground';
+    if (average <= 250) return 'bg-warning/80 text-white';
+    return 'bg-danger text-white';
   };
 
   const getTextColor = (average: number, count: number) => {
-    if (count === 0) return 'text-gray-400';
-    if (average > 200) return 'text-white';
-    return 'text-gray-800';
+    if (count === 0) return 'text-muted-foreground';
+    return ''; // Color is handled by getIntensityColor
   };
 
   // Estatísticas por período
@@ -75,9 +74,9 @@ export const GlucoseHeatmap = ({ data }: GlucoseHeatmapProps) => {
 
   return (
     <div className="space-y-6">
-      <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+      <Card className="bg-card/80 backdrop-blur-sm border-border shadow-[var(--shadow-elegant)]">
         <CardHeader>
-          <CardTitle className="text-xl font-semibold text-gray-900 flex items-center gap-2">
+          <CardTitle className="text-xl font-semibold text-card-foreground flex items-center gap-2">
             🔥 Mapa de Calor - Padrões Semanais
           </CardTitle>
         </CardHeader>
@@ -88,9 +87,9 @@ export const GlucoseHeatmap = ({ data }: GlucoseHeatmapProps) => {
               <div className="min-w-[800px]">
                 {/* Header com horários */}
                 <div className="grid grid-cols-25 gap-1 mb-2">
-                  <div className="text-xs font-medium text-gray-600 p-1"></div>
+                  <div className="text-xs font-medium text-muted-foreground p-1"></div>
                   {hours.map(hour => (
-                    <div key={hour} className="text-xs text-center text-gray-600 p-1">
+                    <div key={hour} className="text-xs text-center text-muted-foreground p-1">
                       {hour.toString().padStart(2, '0')}h
                     </div>
                   ))}
@@ -99,7 +98,7 @@ export const GlucoseHeatmap = ({ data }: GlucoseHeatmapProps) => {
                 {/* Grid principal */}
                 {weekdays.map((day, dayIndex) => (
                   <div key={day} className="grid grid-cols-25 gap-1 mb-1">
-                    <div className="text-xs font-medium text-gray-600 p-2 flex items-center">
+                    <div className="text-xs font-medium text-muted-foreground p-2 flex items-center">
                       {day}
                     </div>
                     {hours.map(hour => {
@@ -122,18 +121,18 @@ export const GlucoseHeatmap = ({ data }: GlucoseHeatmapProps) => {
 
             {/* Legenda */}
             <div className="flex flex-wrap items-center gap-4 text-xs">
-              <span className="font-medium text-gray-700">Legenda:</span>
+              <span className="font-medium text-card-foreground">Legenda:</span>
               {[
-                { label: 'Baixa (<70)', color: 'bg-red-200' },
-                { label: 'Ideal (70-100)', color: 'bg-green-200' },
-                { label: 'Normal (100-140)', color: 'bg-green-300' },
-                { label: 'Elevada (140-180)', color: 'bg-yellow-300' },
-                { label: 'Alta (180-250)', color: 'bg-orange-300' },
-                { label: 'Muito Alta (>250)', color: 'bg-red-400' },
+                { label: 'Baixa (<70)', color: 'bg-danger/80' },
+                { label: 'Ideal (70-100)', color: 'bg-success/60' },
+                { label: 'Normal (100-140)', color: 'bg-success/40' },
+                { label: 'Elevada (140-180)', color: 'bg-warning/60' },
+                { label: 'Alta (180-250)', color: 'bg-warning/80' },
+                { label: 'Muito Alta (>250)', color: 'bg-danger' },
               ].map(item => (
                 <div key={item.label} className="flex items-center gap-1">
                   <div className={`w-3 h-3 rounded ${item.color}`}></div>
-                  <span className="text-gray-600">{item.label}</span>
+                  <span className="text-muted-foreground">{item.label}</span>
                 </div>
               ))}
             </div>
@@ -142,9 +141,9 @@ export const GlucoseHeatmap = ({ data }: GlucoseHeatmapProps) => {
       </Card>
 
       {/* Estatísticas por Período */}
-      <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+      <Card className="bg-card/80 backdrop-blur-sm border-border shadow-[var(--shadow-elegant)]">
         <CardHeader>
-          <CardTitle className="text-xl font-semibold text-gray-900 flex items-center gap-2">
+          <CardTitle className="text-xl font-semibold text-card-foreground flex items-center gap-2">
             ⏰ Análise por Período do Dia
           </CardTitle>
         </CardHeader>
@@ -155,21 +154,21 @@ export const GlucoseHeatmap = ({ data }: GlucoseHeatmapProps) => {
               const count = periodData.length;
               
               return (
-                <div key={period} className="bg-gray-50 rounded-lg p-4">
+                <div key={period} className="bg-muted/30 rounded-lg p-4 border border-border">
                   <div className="flex items-center justify-between mb-3">
-                    <h3 className="font-semibold text-gray-900 capitalize flex items-center gap-2">
+                    <h3 className="font-semibold text-card-foreground capitalize flex items-center gap-2">
                       {period === 'manhã' && '🌅'}
                       {period === 'tarde' && '☀️'}
                       {period === 'noite' && '🌙'}
                       {period}
                     </h3>
-                    <Badge variant="outline">{count} registros</Badge>
+                    <Badge variant="outline" className="border-border">{count} registros</Badge>
                   </div>
                   
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">Média:</span>
-                      <span className="font-bold text-lg">
+                      <span className="text-sm text-muted-foreground">Média:</span>
+                      <span className="font-bold text-lg text-card-foreground">
                         {average > 0 ? `${average.toFixed(0)} mg/dL` : 'N/A'}
                       </span>
                     </div>
@@ -177,21 +176,21 @@ export const GlucoseHeatmap = ({ data }: GlucoseHeatmapProps) => {
                     {count > 0 && (
                       <>
                         <div className="flex items-center justify-between">
-                          <span className="text-sm text-gray-600">Maior:</span>
-                          <span className="font-medium">
+                          <span className="text-sm text-muted-foreground">Maior:</span>
+                          <span className="font-medium text-card-foreground">
                             {Math.max(...periodData.map(r => r.glucose))} mg/dL
                           </span>
                         </div>
                         <div className="flex items-center justify-between">
-                          <span className="text-sm text-gray-600">Menor:</span>
-                          <span className="font-medium">
+                          <span className="text-sm text-muted-foreground">Menor:</span>
+                          <span className="font-medium text-card-foreground">
                             {Math.min(...periodData.map(r => r.glucose))} mg/dL
                           </span>
                         </div>
                       </>
                     )}
 
-                    <div className="text-xs text-gray-500 mt-2">
+                    <div className="text-xs text-muted-foreground mt-2">
                       {period === 'manhã' && 'Horário: 06:00 - 11:59'}
                       {period === 'tarde' && 'Horário: 12:00 - 17:59'}
                       {period === 'noite' && 'Horário: 18:00 - 05:59'}

@@ -104,12 +104,17 @@ export const analyzePatterns = (data: GlucoseReading[]): PatternAnalysis => {
   const hourlyData: { [key: number]: number[] } = {};
   const weekdayData: { [key: number]: number[] } = {};
 
+  // Inicializar estruturas de dados
+  for (let i = 0; i < 24; i++) {
+    hourlyData[i] = [];
+  }
+  for (let i = 0; i < 7; i++) {
+    weekdayData[i] = [];
+  }
+
   data.forEach(reading => {
     const hour = getHours(reading.date);
     const weekday = getDay(reading.date);
-
-    if (!hourlyData[hour]) hourlyData[hour] = [];
-    if (!weekdayData[weekday]) weekdayData[weekday] = [];
 
     hourlyData[hour].push(reading.glucose);
     weekdayData[weekday].push(reading.glucose);
@@ -119,42 +124,100 @@ export const analyzePatterns = (data: GlucoseReading[]): PatternAnalysis => {
   const hourlyPattern: { [key: number]: number } = {};
   const weekdayPattern: { [key: number]: number } = {};
 
+  // Médias horárias
   Object.entries(hourlyData).forEach(([hour, values]) => {
-    hourlyPattern[parseInt(hour)] = values.reduce((sum, val) => sum + val, 0) / values.length;
+    if (values.length > 0) {
+      hourlyPattern[parseInt(hour)] = values.reduce((sum, val) => sum + val, 0) / values.length;
+    } else {
+      hourlyPattern[parseInt(hour)] = 0;
+    }
   });
 
+  // Médias semanais
   Object.entries(weekdayData).forEach(([day, values]) => {
-    weekdayPattern[parseInt(day)] = values.reduce((sum, val) => sum + val, 0) / values.length;
+    if (values.length > 0) {
+      weekdayPattern[parseInt(day)] = values.reduce((sum, val) => sum + val, 0) / values.length;
+    } else {
+      weekdayPattern[parseInt(day)] = 0;
+    }
   });
 
-  // Identificar horários de pico e baixa
-  const hourlyAverages = Object.entries(hourlyPattern).map(([hour, avg]) => ({ hour: parseInt(hour), avg }));
-  const sortedByHigh = [...hourlyAverages].sort((a, b) => b.avg - a.avg);
-  const sortedByLow = [...hourlyAverages].sort((a, b) => a.avg - b.avg);
+  // Identificar horários de pico e baixa de forma mais robusta
+  const validHours = Object.entries(hourlyPattern)
+    .filter(([_, avg]) => avg > 0)
+    .map(([hour, avg]) => ({ hour: parseInt(hour), avg }));
 
-  const peakHours = sortedByHigh.slice(0, 3).map(h => h.hour);
-  const lowHours = sortedByLow.slice(0, 3).map(h => h.hour);
+  if (validHours.length === 0) {
+    return {
+      peakHours: [],
+      lowHours: [],
+      weekdayPattern,
+      hourlyPattern,
+      trends: { overall: 'stable', recentWeek: 'stable' },
+    };
+  }
 
-  // Análise de tendências
+  // Ordenar por valores mais altos e mais baixos
+  const sortedByHigh = [...validHours].sort((a, b) => b.avg - a.avg);
+  const sortedByLow = [...validHours].sort((a, b) => a.avg - b.avg);
+
+  // Pegar top 3 de cada, mas apenas se tiver diferença significativa
+  const avgGlucose = validHours.reduce((sum, h) => sum + h.avg, 0) / validHours.length;
+  const threshold = avgGlucose * 0.1; // 10% de diferença
+
+  const peakHours = sortedByHigh
+    .filter(h => h.avg > avgGlucose + threshold)
+    .slice(0, 3)
+    .map(h => h.hour);
+
+  const lowHours = sortedByLow
+    .filter(h => h.avg < avgGlucose - threshold)
+    .slice(0, 3)
+    .map(h => h.hour);
+
+  // Análise de tendências melhorada
   const sortedData = [...data].sort((a, b) => a.date.getTime() - b.date.getTime());
-  const firstHalf = sortedData.slice(0, Math.floor(sortedData.length / 2));
-  const secondHalf = sortedData.slice(Math.floor(sortedData.length / 2));
+  
+  let overallTrend: 'increasing' | 'decreasing' | 'stable' = 'stable';
+  let recentWeekTrend: 'improving' | 'worsening' | 'stable' = 'stable';
 
-  const firstAvg = firstHalf.reduce((sum, r) => sum + r.glucose, 0) / firstHalf.length;
-  const secondAvg = secondHalf.reduce((sum, r) => sum + r.glucose, 0) / secondHalf.length;
+  if (sortedData.length >= 10) {
+    // Dividir dados em partes para análise de tendência
+    const firstQuarter = sortedData.slice(0, Math.floor(sortedData.length / 4));
+    const lastQuarter = sortedData.slice(-Math.floor(sortedData.length / 4));
 
-  const overallTrend = secondAvg > firstAvg + 10 ? 'increasing' : 
-                       secondAvg < firstAvg - 10 ? 'decreasing' : 'stable';
+    if (firstQuarter.length > 0 && lastQuarter.length > 0) {
+      const firstAvg = firstQuarter.reduce((sum, r) => sum + r.glucose, 0) / firstQuarter.length;
+      const lastAvg = lastQuarter.reduce((sum, r) => sum + r.glucose, 0) / lastQuarter.length;
+
+      const difference = lastAvg - firstAvg;
+      if (Math.abs(difference) > 15) { // Diferença significativa
+        overallTrend = difference > 0 ? 'increasing' : 'decreasing';
+      }
+    }
+  }
 
   // Tendência da última semana
-  const oneWeekAgo = new Date();
-  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-  const recentData = data.filter(r => r.date >= oneWeekAgo);
-  const recentWeekTrend = recentData.length > 5 ? 
-    (recentData.slice(-5).reduce((sum, r) => sum + r.glucose, 0) / 5 > 
-     recentData.slice(0, 5).reduce((sum, r) => sum + r.glucose, 0) / 5 + 10 ? 'worsening' : 
-     recentData.slice(-5).reduce((sum, r) => sum + r.glucose, 0) / 5 < 
-     recentData.slice(0, 5).reduce((sum, r) => sum + r.glucose, 0) / 5 - 10 ? 'improving' : 'stable') : 'stable';
+  if (sortedData.length >= 7) {
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+    const recentData = sortedData.filter(r => r.date >= oneWeekAgo);
+
+    if (recentData.length >= 5) {
+      const firstHalf = recentData.slice(0, Math.floor(recentData.length / 2));
+      const secondHalf = recentData.slice(-Math.floor(recentData.length / 2));
+
+      if (firstHalf.length > 0 && secondHalf.length > 0) {
+        const firstAvg = firstHalf.reduce((sum, r) => sum + r.glucose, 0) / firstHalf.length;
+        const secondAvg = secondHalf.reduce((sum, r) => sum + r.glucose, 0) / secondHalf.length;
+
+        const weekDifference = secondAvg - firstAvg;
+        if (Math.abs(weekDifference) > 10) {
+          recentWeekTrend = weekDifference < 0 ? 'improving' : 'worsening';
+        }
+      }
+    }
+  }
 
   return {
     peakHours,
