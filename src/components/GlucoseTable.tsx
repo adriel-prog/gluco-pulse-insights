@@ -13,9 +13,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { GlucoseReading } from '@/utils/dataService';
+import { exportToCSV } from '@/utils/csvExport';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { Search, ChevronLeft, ChevronRight, ArrowUp, ArrowDown } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight, ArrowUp, ArrowDown, Download } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 interface GlucoseTableProps {
   data: GlucoseReading[];
@@ -25,6 +27,7 @@ type SortField = 'date' | 'time' | 'glucose' | 'period';
 type SortDirection = 'asc' | 'desc';
 
 export const GlucoseTable = ({ data }: GlucoseTableProps) => {
+  const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [sortField, setSortField] = useState<SortField>('date');
@@ -34,10 +37,26 @@ export const GlucoseTable = ({ data }: GlucoseTableProps) => {
   const itemsPerPage = 10;
 
   const getGlucoseStatus = (glucose: number) => {
-    if (glucose < 70) return { label: 'Baixa', color: 'bg-red-100 text-red-800', emoji: '🔴' };
-    if (glucose <= 130) return { label: 'Normal', color: 'bg-green-100 text-green-800', emoji: '🟢' };
-    if (glucose <= 180) return { label: 'Elevada', color: 'bg-yellow-100 text-yellow-800', emoji: '🟡' };
-    return { label: 'Alta', color: 'bg-red-100 text-red-800', emoji: '🔴' };
+    if (glucose < 70) return { label: 'Baixa', color: 'bg-chart-danger/20 text-chart-danger border-chart-danger/30', emoji: '🔴' };
+    if (glucose <= 130) return { label: 'Normal', color: 'bg-chart-success/20 text-chart-success border-chart-success/30', emoji: '🟢' };
+    if (glucose <= 180) return { label: 'Elevada', color: 'bg-chart-warning/20 text-chart-warning border-chart-warning/30', emoji: '🟡' };
+    return { label: 'Alta', color: 'bg-chart-danger/20 text-chart-danger border-chart-danger/30', emoji: '🔴' };
+  };
+
+  const handleExportCSV = () => {
+    try {
+      exportToCSV(filteredAndSortedData, 'registros_glicemia_filtrados');
+      toast({
+        title: "✅ Exportação realizada!",
+        description: `${filteredAndSortedData.length} registros exportados com sucesso.`,
+      });
+    } catch (error) {
+      toast({
+        title: "❌ Erro na exportação",
+        description: "Não foi possível exportar os dados. Tente novamente.",
+        variant: "destructive",
+      });
+    }
   };
 
   const filteredAndSortedData = useMemo(() => {
@@ -114,21 +133,33 @@ export const GlucoseTable = ({ data }: GlucoseTableProps) => {
   const periods = ['all', 'manhã', 'tarde', 'noite'];
 
   return (
-    <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-xl">
+    <Card className="card-modern">
       <CardHeader>
-        <CardTitle className="text-xl font-semibold text-gray-900 flex items-center gap-2">
-          📋 Registros Detalhados
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-xl font-semibold text-card-foreground flex items-center gap-2">
+            📋 Registros Detalhados
+          </CardTitle>
+          <Button
+            onClick={handleExportCSV}
+            variant="outline"
+            size="sm"
+            className="bg-primary/10 border-primary/30 hover:bg-primary/20 text-primary"
+            disabled={filteredAndSortedData.length === 0}
+          >
+            <Download className="h-4 w-4 mr-2" />
+            Exportar CSV
+          </Button>
+        </div>
         
         {/* Filtros e Busca */}
         <div className="flex flex-col sm:flex-row gap-4 mt-4">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={16} />
             <Input
               placeholder="Buscar por data, horário, período..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
+              className="pl-10 bg-background/80 border-border/50"
             />
           </div>
           
@@ -149,12 +180,12 @@ export const GlucoseTable = ({ data }: GlucoseTableProps) => {
       </CardHeader>
       
       <CardContent>
-        <div className="rounded-lg border overflow-hidden">
+        <div className="rounded-lg border border-border/50 overflow-hidden">
           <Table>
             <TableHeader>
-              <TableRow className="bg-gray-50">
+              <TableRow className="bg-muted/30 hover:bg-muted/40">
                 <TableHead 
-                  className="cursor-pointer hover:bg-gray-100 transition-colors"
+                  className="cursor-pointer hover:bg-muted/40 smooth-transition"
                   onClick={() => handleSort('date')}
                 >
                   <div className="flex items-center gap-1">
@@ -162,7 +193,7 @@ export const GlucoseTable = ({ data }: GlucoseTableProps) => {
                   </div>
                 </TableHead>
                 <TableHead 
-                  className="cursor-pointer hover:bg-gray-100 transition-colors"
+                  className="cursor-pointer hover:bg-muted/40 smooth-transition"
                   onClick={() => handleSort('time')}
                 >
                   <div className="flex items-center gap-1">
@@ -170,7 +201,7 @@ export const GlucoseTable = ({ data }: GlucoseTableProps) => {
                   </div>
                 </TableHead>
                 <TableHead 
-                  className="cursor-pointer hover:bg-gray-100 transition-colors"
+                  className="cursor-pointer hover:bg-muted/40 smooth-transition"
                   onClick={() => handleSort('period')}
                 >
                   <div className="flex items-center gap-1">
@@ -178,7 +209,7 @@ export const GlucoseTable = ({ data }: GlucoseTableProps) => {
                   </div>
                 </TableHead>
                 <TableHead 
-                  className="cursor-pointer hover:bg-gray-100 transition-colors"
+                  className="cursor-pointer hover:bg-muted/40 smooth-transition"
                   onClick={() => handleSort('glucose')}
                 >
                   <div className="flex items-center gap-1">
@@ -193,28 +224,28 @@ export const GlucoseTable = ({ data }: GlucoseTableProps) => {
               {paginatedData.map((reading, index) => {
                 const status = getGlucoseStatus(reading.glucose);
                 return (
-                  <TableRow key={index} className="hover:bg-gray-50/50 transition-colors">
-                    <TableCell className="font-medium">
+                  <TableRow key={index} className="hover:bg-muted/20 smooth-transition">
+                    <TableCell className="font-medium text-card-foreground">
                       {format(reading.date, 'dd/MM/yyyy', { locale: ptBR })}
                     </TableCell>
-                    <TableCell>{reading.time}</TableCell>
+                    <TableCell className="text-card-foreground">{reading.time}</TableCell>
                     <TableCell>
-                      <Badge variant="outline" className="text-xs">
+                      <Badge variant="outline" className="text-xs border-border/50">
                         {reading.period}
                       </Badge>
                     </TableCell>
-                    <TableCell className="font-bold text-lg">
+                    <TableCell className="font-bold text-lg text-card-foreground">
                       {reading.glucose} mg/dL
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <span className="text-lg">{status.emoji}</span>
-                        <Badge className={status.color}>
+                        <Badge className={status.color} variant="outline">
                           {status.label}
                         </Badge>
                       </div>
                     </TableCell>
-                    <TableCell className="max-w-xs truncate text-gray-600">
+                    <TableCell className="max-w-xs truncate text-muted-foreground">
                       {reading.notes || '-'}
                     </TableCell>
                   </TableRow>
@@ -227,7 +258,7 @@ export const GlucoseTable = ({ data }: GlucoseTableProps) => {
         {/* Paginação */}
         {totalPages > 1 && (
           <div className="flex items-center justify-between mt-4">
-            <div className="text-sm text-gray-600">
+            <div className="text-sm text-muted-foreground">
               Mostrando {((currentPage - 1) * itemsPerPage) + 1} a {Math.min(currentPage * itemsPerPage, filteredAndSortedData.length)} de {filteredAndSortedData.length} registros
             </div>
             

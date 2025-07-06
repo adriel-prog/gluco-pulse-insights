@@ -31,7 +31,7 @@ export const GlucoseMetrics = ({ data }: GlucoseMetricsProps) => {
     unit, 
     description, 
     icon: Icon, 
-    color = "text-blue-600",
+    color = "text-primary",
     progress,
     target
   }: {
@@ -44,15 +44,15 @@ export const GlucoseMetrics = ({ data }: GlucoseMetricsProps) => {
     progress?: number;
     target?: number;
   }) => (
-    <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300">
+    <Card className="card-modern hover:shadow-[var(--shadow-floating)] smooth-transition">
       <CardContent className="p-6">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <Icon className={color} size={20} />
-            <h3 className="font-medium text-gray-900">{title}</h3>
+            <h3 className="font-medium text-card-foreground">{title}</h3>
           </div>
           {target && (
-            <Badge variant="outline" className="text-xs">
+            <Badge variant="outline" className="text-xs border-border/50">
               Meta: {target}{unit}
             </Badge>
           )}
@@ -60,17 +60,17 @@ export const GlucoseMetrics = ({ data }: GlucoseMetricsProps) => {
         
         <div className="space-y-2">
           <div className="flex items-baseline gap-1">
-            <span className="text-2xl font-bold text-gray-900">
+            <span className="text-2xl font-bold text-card-foreground">
               {value.toFixed(value < 10 ? 1 : 0)}
             </span>
-            <span className="text-sm text-gray-600">{unit}</span>
+            <span className="text-sm text-muted-foreground">{unit}</span>
           </div>
           
           {progress !== undefined && (
             <Progress value={progress} className="h-2" />
           )}
           
-          <p className="text-xs text-gray-600">{description}</p>
+          <p className="text-xs text-muted-foreground">{description}</p>
         </div>
       </CardContent>
     </Card>
@@ -112,7 +112,7 @@ export const GlucoseMetrics = ({ data }: GlucoseMetricsProps) => {
           unit=" mg/dL"
           description="Valor médio de todos os registros"
           icon={Activity}
-          color="text-blue-600"
+          color="text-primary"
           target={120}
         />
 
@@ -122,7 +122,7 @@ export const GlucoseMetrics = ({ data }: GlucoseMetricsProps) => {
           unit=" mg/dL"
           description="Valor central dos registros"
           icon={Target}
-          color="text-green-600"
+          color="text-chart-success"
         />
 
         <MetricCard
@@ -131,7 +131,7 @@ export const GlucoseMetrics = ({ data }: GlucoseMetricsProps) => {
           unit=" mg/dL"
           description="Medida de variabilidade dos valores"
           icon={TrendingUp}
-          color="text-purple-600"
+          color="text-accent"
         />
 
         <MetricCard
@@ -140,7 +140,7 @@ export const GlucoseMetrics = ({ data }: GlucoseMetricsProps) => {
           unit="%"
           description="Variabilidade relativa (ideal: <36%)"
           icon={TrendingDown}
-          color={stats.coefficientOfVariation < 36 ? "text-green-600" : "text-red-600"}
+          color={stats.coefficientOfVariation < 36 ? "text-chart-success" : "text-chart-danger"}
           progress={Math.min(100, (36 / stats.coefficientOfVariation) * 100)}
           target={36}
         />
@@ -151,15 +151,15 @@ export const GlucoseMetrics = ({ data }: GlucoseMetricsProps) => {
           unit="/100"
           description="Qualidade da estabilidade glicêmica"
           icon={CheckCircle}
-          color={stats.variabilityScore >= 70 ? "text-green-600" : "text-yellow-600"}
+          color={stats.variabilityScore >= 70 ? "text-chart-success" : "text-chart-warning"}
           progress={stats.variabilityScore}
         />
       </div>
 
       {/* Tempo no Alvo */}
-      <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+      <Card className="card-modern">
         <CardHeader>
-          <CardTitle className="text-xl font-semibold text-gray-900 flex items-center gap-2">
+          <CardTitle className="text-xl font-semibold text-card-foreground flex items-center gap-2">
             🎯 Tempo no Alvo (TIR - Time in Range)
           </CardTitle>
         </CardHeader>

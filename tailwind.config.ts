@@ -61,6 +61,17 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// Chart colors using design system
+				chart: {
+					danger: 'hsl(var(--danger))',
+					'danger-glow': 'hsl(var(--danger-glow))',
+					success: 'hsl(var(--success))',
+					'success-glow': 'hsl(var(--success-glow))',
+					warning: 'hsl(var(--warning))',
+					'warning-glow': 'hsl(var(--warning-glow))',
+					primary: 'hsl(var(--primary))',
+					'primary-glow': 'hsl(var(--primary-glow))'
 				}
 			},
 			gridTemplateColumns: {

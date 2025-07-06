@@ -10,10 +10,10 @@ interface GlucoseDistributionProps {
 export const GlucoseDistribution = ({ data }: GlucoseDistributionProps) => {
   const categorizeGlucose = () => {
     const categories = {
-      low: { count: 0, label: 'Baixa (<70)', color: '#ef4444' },
-      normal: { count: 0, label: 'Normal (70-130)', color: '#22c55e' },
-      elevated: { count: 0, label: 'Elevada (130-180)', color: '#f59e0b' },
-      high: { count: 0, label: 'Alta (>180)', color: '#dc2626' },
+      low: { count: 0, label: 'Baixa (<70)', color: 'hsl(var(--danger))' },
+      normal: { count: 0, label: 'Normal (70-130)', color: 'hsl(var(--success))' },
+      elevated: { count: 0, label: 'Elevada (130-180)', color: 'hsl(var(--warning))' },
+      high: { count: 0, label: 'Alta (>180)', color: 'hsl(var(--danger-glow))' },
     };
 
     data.forEach(reading => {
@@ -39,9 +39,9 @@ export const GlucoseDistribution = ({ data }: GlucoseDistributionProps) => {
     if (active && payload && payload.length) {
       const data = payload[0];
       return (
-        <div className="bg-white p-3 border rounded-lg shadow-lg">
-          <p className="font-semibold">{data.payload.name}</p>
-          <p className="text-blue-600">
+        <div className="bg-card/95 backdrop-blur-md border border-border/50 rounded-lg shadow-[var(--shadow-floating)] p-3">
+          <p className="font-semibold text-card-foreground">{data.payload.name}</p>
+          <p className="text-primary">
             {data.value} registros ({data.payload.percentage}%)
           </p>
         </div>
@@ -51,9 +51,9 @@ export const GlucoseDistribution = ({ data }: GlucoseDistributionProps) => {
   };
 
   return (
-    <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+    <Card className="card-modern">
       <CardHeader>
-        <CardTitle className="text-xl font-semibold text-gray-900 flex items-center gap-2">
+        <CardTitle className="text-xl font-semibold text-card-foreground flex items-center gap-2">
           🎯 Distribuição por Faixas
         </CardTitle>
       </CardHeader>
@@ -68,7 +68,7 @@ export const GlucoseDistribution = ({ data }: GlucoseDistributionProps) => {
                 labelLine={false}
                 label={({ percentage }) => `${percentage}%`}
                 outerRadius={80}
-                fill="#8884d8"
+                fill="hsl(var(--muted))"
                 dataKey="value"
               >
                 {distributionData.map((entry, index) => (
@@ -79,7 +79,7 @@ export const GlucoseDistribution = ({ data }: GlucoseDistributionProps) => {
               <Legend 
                 verticalAlign="bottom" 
                 height={36}
-                formatter={(value) => <span className="text-sm">{value}</span>}
+                formatter={(value) => <span className="text-sm text-card-foreground">{value}</span>}
               />
             </PieChart>
           </ResponsiveContainer>
@@ -87,15 +87,15 @@ export const GlucoseDistribution = ({ data }: GlucoseDistributionProps) => {
         
         <div className="mt-4 grid grid-cols-2 gap-4">
           {distributionData.map((item, index) => (
-            <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+            <div key={index} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg border border-border/30">
               <div className="flex items-center gap-2">
                 <div 
                   className="w-3 h-3 rounded-full" 
                   style={{ backgroundColor: item.color }}
                 ></div>
-                <span className="text-sm font-medium">{item.name.split(' ')[0]}</span>
+                <span className="text-sm font-medium text-card-foreground">{item.name.split(' ')[0]}</span>
               </div>
-              <span className="text-sm font-bold">{item.value}</span>
+              <span className="text-sm font-bold text-card-foreground">{item.value}</span>
             </div>
           ))}
         </div>

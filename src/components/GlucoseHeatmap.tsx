@@ -47,12 +47,12 @@ export const GlucoseHeatmap = ({ data }: GlucoseHeatmapProps) => {
   const getIntensityColor = (average: number, count: number) => {
     if (count === 0) return 'bg-muted/20';
     
-    if (average < 70) return 'bg-danger/80 text-white';
-    if (average <= 100) return 'bg-success/60 text-white';
-    if (average <= 140) return 'bg-success/40 text-foreground';
-    if (average <= 180) return 'bg-warning/60 text-foreground';
-    if (average <= 250) return 'bg-warning/80 text-white';
-    return 'bg-danger text-white';
+    if (average < 70) return 'bg-chart-danger/80 text-white';
+    if (average <= 100) return 'bg-chart-success/60 text-white';
+    if (average <= 140) return 'bg-chart-success/40 text-card-foreground';
+    if (average <= 180) return 'bg-chart-warning/60 text-card-foreground';
+    if (average <= 250) return 'bg-chart-warning/80 text-white';
+    return 'bg-chart-danger text-white';
   };
 
   const getTextColor = (average: number, count: number) => {
@@ -123,12 +123,12 @@ export const GlucoseHeatmap = ({ data }: GlucoseHeatmapProps) => {
             <div className="flex flex-wrap items-center gap-4 text-xs">
               <span className="font-medium text-card-foreground">Legenda:</span>
               {[
-                { label: 'Baixa (<70)', color: 'bg-danger/80' },
-                { label: 'Ideal (70-100)', color: 'bg-success/60' },
-                { label: 'Normal (100-140)', color: 'bg-success/40' },
-                { label: 'Elevada (140-180)', color: 'bg-warning/60' },
-                { label: 'Alta (180-250)', color: 'bg-warning/80' },
-                { label: 'Muito Alta (>250)', color: 'bg-danger' },
+                { label: 'Baixa (<70)', color: 'bg-chart-danger/80' },
+                { label: 'Ideal (70-100)', color: 'bg-chart-success/60' },
+                { label: 'Normal (100-140)', color: 'bg-chart-success/40' },
+                { label: 'Elevada (140-180)', color: 'bg-chart-warning/60' },
+                { label: 'Alta (180-250)', color: 'bg-chart-warning/80' },
+                { label: 'Muito Alta (>250)', color: 'bg-chart-danger' },
               ].map(item => (
                 <div key={item.label} className="flex items-center gap-1">
                   <div className={`w-3 h-3 rounded ${item.color}`}></div>

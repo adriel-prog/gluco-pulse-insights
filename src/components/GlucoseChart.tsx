@@ -30,13 +30,13 @@ export const GlucoseChart = ({ data }: GlucoseChartProps) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
-        <div className="bg-white p-4 border rounded-lg shadow-lg">
-          <p className="font-semibold">{`${data.date} às ${data.time}`}</p>
-          <p className="text-blue-600">
+        <div className="bg-card/95 backdrop-blur-md border border-border/50 rounded-lg shadow-[var(--shadow-floating)] p-4">
+          <p className="font-semibold text-card-foreground">{`${data.date} às ${data.time}`}</p>
+          <p className="text-primary">
             <span className="font-medium">Glicemia: </span>
             {`${payload[0].value} mg/dL`}
           </p>
-          <p className="text-gray-600 text-sm">{data.period}</p>
+          <p className="text-muted-foreground text-sm">{data.period}</p>
         </div>
       );
     }
@@ -44,9 +44,9 @@ export const GlucoseChart = ({ data }: GlucoseChartProps) => {
   };
 
   return (
-    <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+    <Card className="card-modern">
       <CardHeader>
-        <CardTitle className="text-xl font-semibold text-gray-900 flex items-center gap-2">
+        <CardTitle className="text-xl font-semibold text-card-foreground flex items-center gap-2">
           📈 Tendência dos Últimos 7 Dias
         </CardTitle>
       </CardHeader>
@@ -54,52 +54,52 @@ export const GlucoseChart = ({ data }: GlucoseChartProps) => {
         <div className="h-80">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
               <XAxis 
                 dataKey="label" 
-                tick={{ fontSize: 12 }}
+                tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }}
                 angle={-45}
                 textAnchor="end"
                 height={80}
               />
               <YAxis 
-                tick={{ fontSize: 12 }}
+                tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }}
                 domain={['dataMin - 20', 'dataMax + 20']}
               />
               <Tooltip content={<CustomTooltip />} />
               
-              {/* Linhas de referência */}
-              <ReferenceLine y={70} stroke="#ef4444" strokeDasharray="5 5" label="Baixa" />
-              <ReferenceLine y={130} stroke="#f59e0b" strokeDasharray="5 5" label="Limite Normal" />
-              <ReferenceLine y={180} stroke="#dc2626" strokeDasharray="5 5" label="Alta" />
+              {/* Linhas de referência com cores do design system */}
+              <ReferenceLine y={70} stroke="hsl(var(--danger))" strokeDasharray="5 5" label="Baixa" />
+              <ReferenceLine y={130} stroke="hsl(var(--warning))" strokeDasharray="5 5" label="Limite Normal" />
+              <ReferenceLine y={180} stroke="hsl(var(--danger))" strokeDasharray="5 5" label="Alta" />
               
               <Line 
                 type="monotone" 
                 dataKey="glucose" 
-                stroke="#2563eb" 
+                stroke="hsl(var(--primary))" 
                 strokeWidth={3}
-                dot={{ fill: "#2563eb", strokeWidth: 2, r: 4 }}
-                activeDot={{ r: 6, stroke: "#2563eb", strokeWidth: 2 }}
+                dot={{ fill: "hsl(var(--primary))", strokeWidth: 2, r: 4 }}
+                activeDot={{ r: 6, stroke: "hsl(var(--primary))", strokeWidth: 2, fill: "hsl(var(--primary-glow))" }}
               />
             </LineChart>
           </ResponsiveContainer>
         </div>
         
-        <div className="mt-4 flex flex-wrap gap-4 text-sm text-gray-600">
+        <div className="mt-4 flex flex-wrap gap-4 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-red-500 rounded"></div>
+            <div className="w-3 h-3 bg-chart-danger rounded"></div>
             <span>Baixa (&lt;70)</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-green-500 rounded"></div>
+            <div className="w-3 h-3 bg-chart-success rounded"></div>
             <span>Normal (70-130)</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-amber-500 rounded"></div>
+            <div className="w-3 h-3 bg-chart-warning rounded"></div>
             <span>Elevada (130-180)</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-red-600 rounded"></div>
+            <div className="w-3 h-3 bg-chart-danger rounded"></div>
             <span>Alta (&gt;180)</span>
           </div>
         </div>
