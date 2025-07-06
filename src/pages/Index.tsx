@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -91,34 +90,42 @@ const Index = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-100 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600 mx-auto mb-6"></div>
-          <p className="text-gray-600 text-lg">Carregando dados de glicemia...</p>
-          <p className="text-gray-500 text-sm mt-2">Preparando análises inteligentes...</p>
+      <div className="min-h-screen bg-gradient-to-br from-background via-primary/10 to-accent/10 flex items-center justify-center relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-accent/5 animate-float"></div>
+        <div className="text-center relative z-10">
+          <div className="animate-spin rounded-full h-20 w-20 border-4 border-primary/30 border-t-primary mx-auto mb-8 glow-primary"></div>
+          <p className="text-foreground text-2xl font-semibold mb-2">Carregando dados de glicemia...</p>
+          <p className="text-muted-foreground text-lg">Preparando análises inteligentes...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-accent/5 to-primary/5">
-      <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/10 relative overflow-hidden">
+      {/* Background Effects */}
+      <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-accent/10 animate-float"></div>
+      <div className="absolute top-0 right-0 w-96 h-96 bg-primary/20 rounded-full blur-3xl opacity-30 animate-pulse"></div>
+      <div className="absolute bottom-0 left-0 w-72 h-72 bg-accent/20 rounded-full blur-3xl opacity-20 animate-pulse"></div>
+      
+      <div className="container mx-auto px-6 py-12 relative z-10">
         {/* Header Modernizado */}
-        <div className="mb-8 text-center">
-          <h1 className="text-5xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent mb-4 flex items-center justify-center gap-3">
-            <Activity className="text-primary" size={48} />
+        <div className="mb-12 text-center">
+          <h1 className="text-6xl md:text-7xl font-extrabold gradient-text mb-6 flex items-center justify-center gap-4 animate-float">
+            <Activity className="text-primary glow-primary" size={56} />
             GlucoPulse Insights
           </h1>
-          <p className="text-muted-foreground text-xl max-w-2xl mx-auto leading-relaxed">
+          <p className="text-muted-foreground text-xl md:text-2xl max-w-3xl mx-auto leading-relaxed mb-8">
             Plataforma inteligente para monitoramento e análise avançada de glicemia
           </p>
           {lastUpdate && (
-            <div className="mt-4 flex items-center justify-center gap-2">
-              <Badge variant="outline" className="bg-card/80 backdrop-blur-sm border-border">
+            <div className="flex flex-wrap items-center justify-center gap-4">
+              <Badge variant="outline" className="glass-effect text-foreground border-primary/30 px-4 py-2">
+                <Calendar className="w-4 h-4 mr-2" />
                 Última atualização: {lastUpdate.toLocaleTimeString('pt-BR')}
               </Badge>
-              <Badge className="bg-success/20 text-success border-success/30">
+              <Badge className="bg-gradient-to-r from-success to-success-glow text-white border-0 px-4 py-2 shadow-lg">
+                <Activity className="w-4 h-4 mr-2" />
                 {glucoseData.length} registros carregados
               </Badge>
             </div>
@@ -134,71 +141,79 @@ const Index = () => {
 
         {/* Quick Stats Modernizados */}
         {stats && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <Card className="bg-gradient-to-r from-primary to-primary-glow text-primary-foreground border-0 shadow-[var(--shadow-elegant)] hover:shadow-[var(--shadow-glow)] transition-all duration-300">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium opacity-90">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8 mb-12">
+            <Card className="bg-gradient-to-br from-primary to-primary-dark text-primary-foreground border-0 glow-primary group hover:scale-105 smooth-transition animate-float">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+                <CardTitle className="text-lg font-bold opacity-95">
                   Média Geral
                 </CardTitle>
-                <TrendingUp className="h-5 w-5 opacity-80" />
+                <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
+                  <TrendingUp className="h-6 w-6" />
+                </div>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold">
-                  {stats.average.toFixed(0)} mg/dL
+                <div className="text-4xl font-black mb-2">
+                  {stats.average.toFixed(0)} <span className="text-2xl opacity-80">mg/dL</span>
                 </div>
-                <p className="text-xs opacity-80 mt-1">
-                  {stats.average < 140 ? 'Dentro da meta' : 'Acima da meta'}
+                <p className="text-sm opacity-90 bg-white/10 px-3 py-1 rounded-full inline-block">
+                  {stats.average < 140 ? '✓ Dentro da meta' : '⚠ Acima da meta'}
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-r from-success to-success/80 text-white border-0 shadow-[var(--shadow-elegant)] hover:shadow-[var(--shadow-glow)] transition-all duration-300">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium opacity-90">
+            <Card className="bg-gradient-to-br from-success to-success-glow text-white border-0 shadow-[0_0_30px_hsl(var(--success)/0.3)] group hover:scale-105 smooth-transition animate-float [animation-delay:0.2s]">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+                <CardTitle className="text-lg font-bold opacity-95">
                   Registros Ativos
                 </CardTitle>
-                <Activity className="h-5 w-5 opacity-80" />
+                <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
+                  <Activity className="h-6 w-6" />
+                </div>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold">
+                <div className="text-4xl font-black mb-2">
                   {stats.total}
                 </div>
-                <p className="text-xs opacity-80 mt-1">
-                  Dados para análise
+                <p className="text-sm opacity-90 bg-white/10 px-3 py-1 rounded-full inline-block">
+                  📊 Dados para análise
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-r from-danger to-danger/80 text-white border-0 shadow-[var(--shadow-elegant)] hover:shadow-[var(--shadow-glow)] transition-all duration-300">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium opacity-90">
+            <Card className="bg-gradient-to-br from-danger to-danger-glow text-white border-0 shadow-[0_0_30px_hsl(var(--danger)/0.3)] group hover:scale-105 smooth-transition animate-float [animation-delay:0.4s]">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+                <CardTitle className="text-lg font-bold opacity-95">
                   Pico Máximo
                 </CardTitle>
-                <AlertTriangle className="h-5 w-5 opacity-80" />
+                <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
+                  <AlertTriangle className="h-6 w-6" />
+                </div>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold">
-                  {stats.max} mg/dL
+                <div className="text-4xl font-black mb-2">
+                  {stats.max} <span className="text-2xl opacity-80">mg/dL</span>
                 </div>
-                <p className="text-xs opacity-80 mt-1">
-                  Valor mais alto registrado
+                <p className="text-sm opacity-90 bg-white/10 px-3 py-1 rounded-full inline-block">
+                  🔥 Valor mais alto
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-r from-accent to-accent/80 text-white border-0 shadow-[var(--shadow-elegant)] hover:shadow-[var(--shadow-glow)] transition-all duration-300">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium opacity-90">
+            <Card className="bg-gradient-to-br from-accent to-accent-glow text-white border-0 shadow-[0_0_30px_hsl(var(--accent)/0.3)] group hover:scale-105 smooth-transition animate-float [animation-delay:0.6s]">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+                <CardTitle className="text-lg font-bold opacity-95">
                   Menor Valor
                 </CardTitle>
-                <Calendar className="h-5 w-5 opacity-80" />
+                <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
+                  <Calendar className="h-6 w-6" />
+                </div>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold">
-                  {stats.min} mg/dL
+                <div className="text-4xl font-black mb-2">
+                  {stats.min} <span className="text-2xl opacity-80">mg/dL</span>
                 </div>
-                <p className="text-xs opacity-80 mt-1">
-                  Registro mínimo
+                <p className="text-sm opacity-90 bg-white/10 px-3 py-1 rounded-full inline-block">
+                  💧 Registro mínimo
                 </p>
               </CardContent>
             </Card>
@@ -207,29 +222,29 @@ const Index = () => {
 
         {/* Navegação Principal */}
         <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="grid w-full grid-cols-6 mb-8 bg-card/90 backdrop-blur-lg shadow-[var(--shadow-elegant)] border border-border h-12">
-            <TabsTrigger value="overview" className="text-sm font-medium">
+          <TabsList className="grid w-full grid-cols-6 mb-10 glass-effect shadow-[var(--shadow-floating)] border border-primary/20 h-16 p-2 rounded-2xl">
+            <TabsTrigger value="overview" className="text-sm font-semibold rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground smooth-transition">
               📊 Overview
             </TabsTrigger>
-            <TabsTrigger value="metrics" className="text-sm font-medium">
+            <TabsTrigger value="metrics" className="text-sm font-semibold rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground smooth-transition">
               🎯 Métricas
             </TabsTrigger>
-            <TabsTrigger value="patterns" className="text-sm font-medium">
+            <TabsTrigger value="patterns" className="text-sm font-semibold rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground smooth-transition">
               🔥 Padrões
             </TabsTrigger>
-            <TabsTrigger value="table" className="text-sm font-medium">
+            <TabsTrigger value="table" className="text-sm font-semibold rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground smooth-transition">
               📋 Tabela
             </TabsTrigger>
-            <TabsTrigger value="calendar" className="text-sm font-medium">
+            <TabsTrigger value="calendar" className="text-sm font-semibold rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground smooth-transition">
               📅 Calendário
             </TabsTrigger>
-            <TabsTrigger value="insights" className="text-sm font-medium">
+            <TabsTrigger value="insights" className="text-sm font-semibold rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground smooth-transition">
               🧠 Insights
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="overview" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <TabsContent value="overview" className="space-y-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <GlucoseChart data={filteredData} />
               <GlucoseDistribution data={filteredData} />
             </div>

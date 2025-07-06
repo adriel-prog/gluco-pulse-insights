@@ -62,26 +62,28 @@ export const DateRangeFilter = ({ onFilterChange, totalRecords, filteredRecords 
   };
 
   return (
-    <Card className="bg-background/80 backdrop-blur-md border-0 shadow-lg mb-6">
-      <CardContent className="p-4">
-        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2">
-              <Filter className="h-5 w-5 text-muted-foreground" />
-              <span className="font-medium text-foreground">Period Filter:</span>
+    <Card className="card-modern glass-effect mb-8 border border-primary/20">
+      <CardContent className="p-6">
+        <div className="flex flex-col sm:flex-row gap-6 items-start sm:items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-primary/20 rounded-lg backdrop-blur-sm">
+                <Filter className="h-5 w-5 text-primary" />
+              </div>
+              <span className="font-semibold text-foreground text-lg">Filtro de Período:</span>
             </div>
             
             <Select value={selectedPeriod} onValueChange={handlePeriodChange}>
-              <SelectTrigger className="w-48 bg-background border-border">
-                <SelectValue placeholder="Select period" />
+              <SelectTrigger className="w-52 bg-background/80 backdrop-blur-sm border-border/50 hover:border-primary/50 smooth-transition">
+                <SelectValue placeholder="Selecionar período" />
               </SelectTrigger>
-              <SelectContent className="bg-background border-border">
-                <SelectItem value="all">All records</SelectItem>
-                <SelectItem value="last7days">Last 7 days</SelectItem>
-                <SelectItem value="last30days">Last 30 days</SelectItem>
-                <SelectItem value="thisMonth">This month</SelectItem>
-                <SelectItem value="lastMonth">Last month</SelectItem>
-                <SelectItem value="last3months">Last 3 months</SelectItem>
+              <SelectContent className="bg-background/95 backdrop-blur-md border-border/50">
+                <SelectItem value="all">Todos os registros</SelectItem>
+                <SelectItem value="last7days">Últimos 7 dias</SelectItem>
+                <SelectItem value="last30days">Últimos 30 dias</SelectItem>
+                <SelectItem value="thisMonth">Este mês</SelectItem>
+                <SelectItem value="lastMonth">Mês passado</SelectItem>
+                <SelectItem value="last3months">Últimos 3 meses</SelectItem>
               </SelectContent>
             </Select>
 
@@ -90,22 +92,22 @@ export const DateRangeFilter = ({ onFilterChange, totalRecords, filteredRecords 
                 variant="outline"
                 size="sm"
                 onClick={clearFilter}
-                className="border-border hover:bg-accent"
+                className="border-border/50 hover:bg-accent/20 hover:border-accent/50 smooth-transition"
               >
-                <X className="h-4 w-4 mr-1" />
-                Clear
+                <X className="h-4 w-4 mr-2" />
+                Limpar
               </Button>
             )}
           </div>
 
-          <div className="flex items-center gap-3">
-            <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
-              <Calendar className="h-3 w-3 mr-1" />
+          <div className="flex items-center gap-4">
+            <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30 px-4 py-2 backdrop-blur-sm">
+              <Calendar className="h-4 w-4 mr-2" />
               {getPeriodLabel(selectedPeriod)}
             </Badge>
             
-            <Badge variant="secondary" className="bg-secondary text-secondary-foreground">
-              {filteredRecords} of {totalRecords} records
+            <Badge className="bg-gradient-to-r from-secondary to-muted text-secondary-foreground px-4 py-2 font-medium">
+              {filteredRecords} de {totalRecords} registros
             </Badge>
           </div>
         </div>
