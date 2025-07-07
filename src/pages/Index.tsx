@@ -13,6 +13,7 @@ import { GlucoseHeatmap } from '@/components/GlucoseHeatmap';
 import { GlucoseRecommendations } from '@/components/GlucoseRecommendations';
 import { DateRangeFilter } from '@/components/DateRangeFilter';
 import { Activity, TrendingUp, AlertTriangle, Calendar, BarChart3, Brain } from 'lucide-react';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { fetchGlucoseData, type GlucoseReading } from '@/utils/dataService';
 import { isAfter, isBefore } from 'date-fns';
 
@@ -90,43 +91,47 @@ const Index = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-primary/10 to-accent/10 flex items-center justify-center relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-accent/5 animate-float"></div>
-        <div className="text-center relative z-10">
-          <div className="animate-spin rounded-full h-20 w-20 border-4 border-primary/30 border-t-primary mx-auto mb-8 glow-primary"></div>
-          <p className="text-foreground text-2xl font-semibold mb-2">Carregando dados de glicemia...</p>
-          <p className="text-muted-foreground text-lg">Preparando análises inteligentes...</p>
+      <div className="min-h-screen bg-background flex items-center justify-center relative">
+        <div className="text-center relative z-10 animate-fade-in">
+          <div className="w-16 h-16 border-4 border-primary/20 border-t-primary rounded-full animate-spin mx-auto mb-6"></div>
+          <h2 className="text-2xl font-semibold text-foreground mb-2">Carregando GlucoPulse</h2>
+          <p className="text-muted-foreground">Preparando seus dados de saúde...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/10 relative overflow-hidden">
-      {/* Background Effects */}
-      <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-accent/10 animate-float"></div>
-      <div className="absolute top-0 right-0 w-96 h-96 bg-primary/20 rounded-full blur-3xl opacity-30 animate-pulse"></div>
-      <div className="absolute bottom-0 left-0 w-72 h-72 bg-accent/20 rounded-full blur-3xl opacity-20 animate-pulse"></div>
-      
-      <div className="container mx-auto px-6 py-12 relative z-10">
-        {/* Header Modernizado */}
-        <div className="mb-12 text-center">
-          <h1 className="text-6xl md:text-7xl font-extrabold gradient-text mb-6 flex items-center justify-center gap-4 animate-float">
-            <Activity className="text-primary glow-primary" size={56} />
-            GlucoPulse Insights
-          </h1>
-          <p className="text-muted-foreground text-xl md:text-2xl max-w-3xl mx-auto leading-relaxed mb-8">
-            Plataforma inteligente para monitoramento e análise avançada de glicemia
-          </p>
+    <div className="min-h-screen bg-background relative">      
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
+        {/* Modern Header */}
+        <div className="mb-8 animate-fade-in">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-gradient-to-br from-primary to-accent rounded-2xl shadow-lg hover-lift">
+                <Activity className="text-white h-8 w-8" />
+              </div>
+              <div>
+                <h1 className="text-3xl sm:text-4xl font-bold gradient-health">
+                  GlucoPulse Insights
+                </h1>
+                <p className="text-muted-foreground text-lg">
+                  Monitoramento inteligente de glicemia
+                </p>
+              </div>
+            </div>
+            <ThemeToggle />
+          </div>
+          
           {lastUpdate && (
-            <div className="flex flex-wrap items-center justify-center gap-4">
-              <Badge variant="outline" className="glass-effect text-foreground border-primary/30 px-4 py-2">
-                <Calendar className="w-4 h-4 mr-2" />
-                Última atualização: {lastUpdate.toLocaleTimeString('pt-BR')}
+            <div className="flex flex-wrap items-center gap-3 mb-6">
+              <Badge variant="outline" className="glass-subtle border-primary/30 px-3 py-1.5">
+                <Calendar className="w-3 h-3 mr-2" />
+                {lastUpdate.toLocaleTimeString('pt-BR')}
               </Badge>
-              <Badge className="bg-gradient-to-r from-success to-success-glow text-white border-0 px-4 py-2 shadow-lg">
-                <Activity className="w-4 h-4 mr-2" />
-                {glucoseData.length} registros carregados
+              <Badge className="bg-gradient-to-r from-success to-success/80 text-white border-0 px-3 py-1.5">
+                <Activity className="w-3 h-3 mr-2" />
+                {glucoseData.length} registros
               </Badge>
             </div>
           )}
@@ -139,134 +144,134 @@ const Index = () => {
           filteredRecords={filteredData.length}
         />
 
-        {/* Quick Stats Modernizados */}
+        {/* Modern Stats Cards */}
         {stats && (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8 mb-12">
-            <Card className="bg-gradient-to-br from-primary to-primary-dark text-primary-foreground border-0 glow-primary group hover:scale-105 smooth-transition animate-float">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8 animate-slide-up">
+            <Card className="card-floating hover-lift group">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-                <CardTitle className="text-lg font-bold opacity-95">
+                <CardTitle className="text-base font-semibold text-card-foreground">
                   Média Geral
                 </CardTitle>
-                <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
-                  <TrendingUp className="h-6 w-6" />
+                <div className="p-2 bg-primary/10 text-primary rounded-xl">
+                  <TrendingUp className="h-5 w-5" />
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="text-4xl font-black mb-2">
-                  {stats.average.toFixed(0)} <span className="text-2xl opacity-80">mg/dL</span>
+                <div className="text-3xl font-bold text-primary mb-1">
+                  {stats.average.toFixed(0)} <span className="text-lg text-muted-foreground">mg/dL</span>
                 </div>
-                <p className="text-sm opacity-90 bg-white/10 px-3 py-1 rounded-full inline-block">
+                <p className="text-xs text-muted-foreground">
                   {stats.average < 140 ? '✓ Dentro da meta' : '⚠ Acima da meta'}
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-success to-success-glow text-white border-0 shadow-[0_0_30px_hsl(var(--success)/0.3)] group hover:scale-105 smooth-transition animate-float [animation-delay:0.2s]">
+            <Card className="card-floating hover-lift group">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-                <CardTitle className="text-lg font-bold opacity-95">
-                  Registros Ativos
+                <CardTitle className="text-base font-semibold text-card-foreground">
+                  Total de Registros
                 </CardTitle>
-                <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
-                  <Activity className="h-6 w-6" />
+                <div className="p-2 bg-success/10 text-success rounded-xl">
+                  <Activity className="h-5 w-5" />
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="text-4xl font-black mb-2">
+                <div className="text-3xl font-bold text-success mb-1">
                   {stats.total}
                 </div>
-                <p className="text-sm opacity-90 bg-white/10 px-3 py-1 rounded-full inline-block">
-                  📊 Dados para análise
+                <p className="text-xs text-muted-foreground">
+                  Dados para análise
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-danger to-danger-glow text-white border-0 shadow-[0_0_30px_hsl(var(--danger)/0.3)] group hover:scale-105 smooth-transition animate-float [animation-delay:0.4s]">
+            <Card className="card-floating hover-lift group">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-                <CardTitle className="text-lg font-bold opacity-95">
+                <CardTitle className="text-base font-semibold text-card-foreground">
                   Pico Máximo
                 </CardTitle>
-                <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
-                  <AlertTriangle className="h-6 w-6" />
+                <div className="p-2 bg-danger/10 text-danger rounded-xl">
+                  <AlertTriangle className="h-5 w-5" />
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="text-4xl font-black mb-2">
-                  {stats.max} <span className="text-2xl opacity-80">mg/dL</span>
+                <div className="text-3xl font-bold text-danger mb-1">
+                  {stats.max} <span className="text-lg text-muted-foreground">mg/dL</span>
                 </div>
-                <p className="text-sm opacity-90 bg-white/10 px-3 py-1 rounded-full inline-block">
-                  🔥 Valor mais alto
+                <p className="text-xs text-muted-foreground">
+                  Valor mais alto
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-accent to-accent-glow text-white border-0 shadow-[0_0_30px_hsl(var(--accent)/0.3)] group hover:scale-105 smooth-transition animate-float [animation-delay:0.6s]">
+            <Card className="card-floating hover-lift group">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-                <CardTitle className="text-lg font-bold opacity-95">
+                <CardTitle className="text-base font-semibold text-card-foreground">
                   Menor Valor
                 </CardTitle>
-                <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
-                  <Calendar className="h-6 w-6" />
+                <div className="p-2 bg-accent/10 text-accent rounded-xl">
+                  <Calendar className="h-5 w-5" />
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="text-4xl font-black mb-2">
-                  {stats.min} <span className="text-2xl opacity-80">mg/dL</span>
+                <div className="text-3xl font-bold text-accent mb-1">
+                  {stats.min} <span className="text-lg text-muted-foreground">mg/dL</span>
                 </div>
-                <p className="text-sm opacity-90 bg-white/10 px-3 py-1 rounded-full inline-block">
-                  💧 Registro mínimo
+                <p className="text-xs text-muted-foreground">
+                  Registro mínimo
                 </p>
               </CardContent>
             </Card>
           </div>
         )}
 
-        {/* Navegação Principal */}
-        <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="grid w-full grid-cols-6 mb-10 glass-effect shadow-[var(--shadow-floating)] border border-primary/20 h-16 p-2 rounded-2xl">
-            <TabsTrigger value="overview" className="text-sm font-semibold rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground smooth-transition">
+        {/* Modern Navigation */}
+        <Tabs defaultValue="overview" className="w-full animate-scale-in">
+          <TabsList className="grid w-full grid-cols-3 sm:grid-cols-6 mb-8 glass-subtle h-14 p-1 rounded-2xl">
+            <TabsTrigger value="overview" className="text-sm font-medium rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground smooth-transition">
               📊 Overview
             </TabsTrigger>
-            <TabsTrigger value="metrics" className="text-sm font-semibold rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground smooth-transition">
+            <TabsTrigger value="metrics" className="text-sm font-medium rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground smooth-transition">
               🎯 Métricas
             </TabsTrigger>
-            <TabsTrigger value="patterns" className="text-sm font-semibold rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground smooth-transition">
+            <TabsTrigger value="patterns" className="text-sm font-medium rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground smooth-transition">
               🔥 Padrões
             </TabsTrigger>
-            <TabsTrigger value="table" className="text-sm font-semibold rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground smooth-transition">
+            <TabsTrigger value="table" className="text-sm font-medium rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground smooth-transition">
               📋 Tabela
             </TabsTrigger>
-            <TabsTrigger value="calendar" className="text-sm font-semibold rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground smooth-transition">
+            <TabsTrigger value="calendar" className="text-sm font-medium rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground smooth-transition">
               📅 Calendário
             </TabsTrigger>
-            <TabsTrigger value="insights" className="text-sm font-semibold rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground smooth-transition">
+            <TabsTrigger value="insights" className="text-sm font-medium rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground smooth-transition">
               🧠 Insights
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="overview" className="space-y-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <TabsContent value="overview" className="space-y-6 animate-fade-in">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <GlucoseChart data={filteredData} />
               <GlucoseDistribution data={filteredData} />
             </div>
           </TabsContent>
 
-          <TabsContent value="metrics">
+          <TabsContent value="metrics" className="animate-fade-in">
             <GlucoseMetrics data={filteredData} />
           </TabsContent>
 
-          <TabsContent value="patterns">
+          <TabsContent value="patterns" className="animate-fade-in">
             <GlucoseHeatmap data={filteredData} />
           </TabsContent>
 
-          <TabsContent value="table">
+          <TabsContent value="table" className="animate-fade-in">
             <GlucoseTable data={filteredData} />
           </TabsContent>
 
-          <TabsContent value="calendar">
+          <TabsContent value="calendar" className="animate-fade-in">
             <GlucoseCalendar data={filteredData} />
           </TabsContent>
 
-          <TabsContent value="insights">
+          <TabsContent value="insights" className="animate-fade-in">
             <GlucoseRecommendations data={filteredData} />
           </TabsContent>
         </Tabs>

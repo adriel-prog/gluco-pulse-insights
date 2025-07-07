@@ -8,59 +8,81 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 240 10% 98%;
-    --foreground: 222.2 84% 4.9%;
+    /* Modern Health App Color Palette - Light Mode */
+    --background: 210 20% 98%;
+    --foreground: 215 25% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 215 25% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 215 25% 15%;
 
-    --primary: 220 90% 56%;
-    --primary-foreground: 210 40% 98%;
-    --primary-glow: 220 100% 70%;
-    --primary-dark: 220 90% 45%;
+    /* Primary Blues - Apple Health Inspired */
+    --primary: 214 84% 56%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 214 100% 70%;
+    --primary-dark: 214 84% 46%;
+    --primary-light: 210 100% 95%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Secondary Grays - Clean and Professional */
+    --secondary: 210 20% 96%;
+    --secondary-foreground: 215 15% 25%;
 
-    --muted: 220 14% 96%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 210 20% 96%;
+    --muted-foreground: 215 15% 50%;
 
-    --accent: 280 85% 65%;
+    /* Accent Purple - Modern Touch */
+    --accent: 270 75% 60%;
     --accent-foreground: 0 0% 100%;
-    --accent-glow: 280 100% 80%;
+    --accent-glow: 270 85% 75%;
+    --accent-light: 270 100% 95%;
 
-    --success: 142 76% 36%;
-    --success-glow: 142 76% 60%;
-    --warning: 38 92% 50%;
+    /* Health Status Colors */
+    --success: 142 69% 45%;
+    --success-glow: 142 69% 60%;
+    --success-light: 142 100% 95%;
+    
+    --warning: 38 95% 55%;
     --warning-glow: 38 100% 70%;
-    --danger: 0 84.2% 60.2%;
-    --danger-glow: 0 100% 80%;
+    --warning-light: 38 100% 95%;
+    
+    --danger: 0 72% 55%;
+    --danger-glow: 0 85% 70%;
+    --danger-light: 0 100% 95%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    /* Soft Pink for Highlights */
+    --highlight: 330 75% 65%;
+    --highlight-glow: 330 85% 75%;
+    --highlight-light: 330 100% 95%;
 
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 220 90% 56%;
+    --destructive: 0 72% 55%;
+    --destructive-foreground: 0 0% 100%;
 
+    --border: 215 20% 90%;
+    --input: 215 20% 94%;
+    --ring: 214 84% 56%;
+
+    /* Modern Gradients */
     --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
     --gradient-accent: linear-gradient(135deg, hsl(var(--accent)), hsl(var(--accent-glow)));
     --gradient-success: linear-gradient(135deg, hsl(var(--success)), hsl(var(--success-glow)));
     --gradient-warning: linear-gradient(135deg, hsl(var(--warning)), hsl(var(--warning-glow)));
     --gradient-danger: linear-gradient(135deg, hsl(var(--danger)), hsl(var(--danger-glow)));
-    --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.25), rgba(255,255,255,0.1));
-    --gradient-glass-dark: linear-gradient(135deg, rgba(0,0,0,0.1), rgba(0,0,0,0.05));
+    --gradient-highlight: linear-gradient(135deg, hsl(var(--highlight)), hsl(var(--highlight-glow)));
     
-    --shadow-glow: 0 0 30px hsl(var(--primary) / 0.3);
-    --shadow-elegant: 0 10px 40px -10px hsl(var(--primary) / 0.2);
-    --shadow-card: 0 4px 20px -2px hsl(var(--primary) / 0.1);
-    --shadow-floating: 0 20px 40px -12px hsl(var(--primary) / 0.25);
-    --shadow-subtle: 0 2px 8px -2px hsl(var(--muted-foreground) / 0.1);
+    /* Subtle Glass Effects */
+    --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+    --gradient-glass-strong: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.08));
+    
+    /* Modern Shadows - Softer and More Elegant */
+    --shadow-soft: 0 2px 10px -3px hsl(var(--primary) / 0.1);
+    --shadow-medium: 0 4px 20px -4px hsl(var(--primary) / 0.15);
+    --shadow-large: 0 10px 40px -10px hsl(var(--primary) / 0.2);
+    --shadow-floating: 0 15px 35px -8px hsl(var(--primary) / 0.25);
+    --shadow-card: 0 1px 3px 0 hsl(var(--foreground) / 0.1), 0 1px 2px 0 hsl(var(--foreground) / 0.06);
 
-    --radius: 0.75rem;
+    --radius: 12px;
 
     --sidebar-background: 0 0% 98%;
 
@@ -80,50 +102,71 @@ All colors MUST be HSL.
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    /* Modern Health App Color Palette - Dark Mode */
+    --background: 220 15% 6%;
+    --foreground: 210 20% 95%;
 
-    --card: 220 13% 8%;
-    --card-foreground: 210 40% 98%;
+    --card: 220 15% 8%;
+    --card-foreground: 210 20% 95%;
 
-    --popover: 220 13% 8%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 220 15% 8%;
+    --popover-foreground: 210 20% 95%;
 
-    --primary: 220 90% 56%;
+    /* Primary Blues - Adjusted for Dark Mode */
+    --primary: 214 84% 60%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 220 100% 70%;
-    --primary-dark: 220 90% 45%;
+    --primary-glow: 214 100% 75%;
+    --primary-dark: 214 84% 50%;
+    --primary-light: 214 50% 15%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    /* Secondary Grays - Dark Mode */
+    --secondary: 220 15% 12%;
+    --secondary-foreground: 210 20% 85%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 220 15% 12%;
+    --muted-foreground: 215 15% 65%;
 
-    --accent: 280 85% 65%;
+    /* Accent Purple - Dark Mode */
+    --accent: 270 75% 65%;
     --accent-foreground: 0 0% 100%;
-    --accent-glow: 280 100% 80%;
+    --accent-glow: 270 85% 80%;
+    --accent-light: 270 30% 15%;
 
-    --success: 142 76% 50%;
-    --success-glow: 142 76% 70%;
-    --warning: 38 92% 60%;
+    /* Health Status Colors - Dark Mode */
+    --success: 142 69% 55%;
+    --success-glow: 142 69% 70%;
+    --success-light: 142 50% 15%;
+    
+    --warning: 38 95% 65%;
     --warning-glow: 38 100% 80%;
-    --danger: 0 84.2% 60.2%;
-    --danger-glow: 0 100% 80%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 220 90% 56%;
+    --warning-light: 38 50% 15%;
     
-    --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
-    --gradient-glass-dark: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
+    --danger: 0 72% 65%;
+    --danger-glow: 0 85% 80%;
+    --danger-light: 0 50% 15%;
+
+    /* Soft Pink for Highlights - Dark Mode */
+    --highlight: 330 75% 70%;
+    --highlight-glow: 330 85% 80%;
+    --highlight-light: 330 50% 15%;
+
+    --destructive: 0 72% 65%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 15% 15%;
+    --input: 220 15% 12%;
+    --ring: 214 84% 60%;
     
-    --shadow-card: 0 4px 20px -2px hsl(var(--background) / 0.8);
-    --shadow-floating: 0 20px 40px -12px hsl(var(--background) / 0.9);
-    --shadow-subtle: 0 2px 8px -2px hsl(var(--background) / 0.5);
+    /* Dark Mode Glass Effects */
+    --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+    --gradient-glass-strong: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
+    
+    /* Dark Mode Shadows */
+    --shadow-soft: 0 2px 10px -3px hsl(var(--background) / 0.5);
+    --shadow-medium: 0 4px 20px -4px hsl(var(--background) / 0.6);
+    --shadow-large: 0 10px 40px -10px hsl(var(--background) / 0.7);
+    --shadow-floating: 0 15px 35px -8px hsl(var(--background) / 0.8);
+    --shadow-card: 0 1px 3px 0 hsl(var(--background) / 0.3), 0 1px 2px 0 hsl(var(--background) / 0.2);
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
@@ -141,35 +184,160 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground antialiased;
+    @apply bg-background text-foreground antialiased font-inter;
+    font-feature-settings: "cv03", "cv04", "cv11";
   }
 
+  /* Modern Glass Effects */
   .glass-effect {
-    @apply backdrop-blur-xl bg-white/10 border border-white/20;
+    @apply backdrop-blur-xl border border-border/30;
+    background: var(--gradient-glass-strong);
   }
 
+  .glass-subtle {
+    @apply backdrop-blur-md border border-border/20;
+    background: var(--gradient-glass);
+  }
+
+  /* Modern Card Styles */
   .card-modern {
-    @apply bg-card/80 backdrop-blur-md border-0 shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-floating)] transition-all duration-300;
+    @apply bg-card/95 backdrop-blur-sm border border-border/50 rounded-xl;
+    box-shadow: var(--shadow-card);
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
 
+  .card-modern:hover {
+    box-shadow: var(--shadow-medium);
+    transform: translateY(-2px);
+  }
+
+  .card-floating {
+    @apply bg-card/98 backdrop-blur-md border border-border/30 rounded-2xl;
+    box-shadow: var(--shadow-floating);
+  }
+
+  /* Gradient Text Effects */
   .gradient-text {
     @apply bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent;
   }
 
-  .glow-primary {
-    box-shadow: var(--shadow-glow);
+  .gradient-health {
+    @apply bg-gradient-to-r from-success via-primary to-accent bg-clip-text text-transparent;
   }
 
-  .animate-float {
-    animation: float 6s ease-in-out infinite;
+  /* Button Effects */
+  .btn-modern {
+    @apply relative overflow-hidden rounded-xl font-medium transition-all duration-300;
+    box-shadow: var(--shadow-soft);
+  }
+
+  .btn-modern:hover {
+    box-shadow: var(--shadow-medium);
+    transform: translateY(-1px);
+  }
+
+  .btn-modern:active {
+    transform: translateY(0);
+  }
+
+  /* Ripple Effect */
+  .ripple {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ripple::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+  }
+
+  .ripple:active::before {
+    width: 300px;
+    height: 300px;
+  }
+
+  /* Micro Animations */
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .hover-lift {
+    transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-4px);
+  }
+
+  .hover-glow {
+    transition: box-shadow 0.3s ease;
+  }
+
+  .hover-glow:hover {
+    box-shadow: var(--shadow-large);
+  }
+
+  /* Keyframes */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
   }
 
   @keyframes float {
     0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-10px); }
+    50% { transform: translateY(-6px); }
   }
 
+  .animate-float {
+    animation: float 4s ease-in-out infinite;
+  }
+
+  /* Smooth Transitions */
   .smooth-transition {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
 }
