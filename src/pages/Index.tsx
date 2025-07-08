@@ -16,6 +16,7 @@ import { Activity, TrendingUp, AlertTriangle, Calendar, BarChart3, Brain } from 
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { fetchGlucoseData, type GlucoseReading } from '@/utils/dataService';
 import { isAfter, isBefore } from 'date-fns';
+import { GlucoseReport } from '@/components/GlucoseReport';
 
 const Index = () => {
   const [glucoseData, setGlucoseData] = useState<GlucoseReading[]>([]);
@@ -227,7 +228,7 @@ const Index = () => {
 
         {/* Modern Navigation */}
         <Tabs defaultValue="overview" className="w-full animate-scale-in">
-          <TabsList className="grid w-full grid-cols-3 sm:grid-cols-6 mb-8 glass-subtle h-14 p-1 rounded-2xl">
+          <TabsList className="grid w-full grid-cols-3 sm:grid-cols-7 mb-8 glass-subtle h-14 p-1 rounded-2xl">
             <TabsTrigger value="overview" className="text-sm font-medium rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground smooth-transition">
               📊 Overview
             </TabsTrigger>
@@ -236,6 +237,9 @@ const Index = () => {
             </TabsTrigger>
             <TabsTrigger value="patterns" className="text-sm font-medium rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground smooth-transition">
               🔥 Padrões
+            </TabsTrigger>
+            <TabsTrigger value="report" className="text-sm font-medium rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground smooth-transition">
+              📋 Relatório
             </TabsTrigger>
             <TabsTrigger value="table" className="text-sm font-medium rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground smooth-transition">
               📋 Tabela
@@ -261,6 +265,10 @@ const Index = () => {
 
           <TabsContent value="patterns" className="animate-fade-in">
             <GlucoseHeatmap data={filteredData} />
+          </TabsContent>
+
+          <TabsContent value="report" className="animate-fade-in">
+            <GlucoseReport data={filteredData} />
           </TabsContent>
 
           <TabsContent value="table" className="animate-fade-in">
