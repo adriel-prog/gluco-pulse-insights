@@ -13,7 +13,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { GlucoseReading } from '@/utils/dataService';
-import { exportToCSV } from '@/utils/csvExport';
+import { exportToExcel } from '@/utils/csvExport';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { Search, ChevronLeft, ChevronRight, ArrowUp, ArrowDown, Download } from 'lucide-react';
@@ -43,12 +43,12 @@ export const GlucoseTable = ({ data }: GlucoseTableProps) => {
     return { label: 'Alta', color: 'bg-chart-danger/20 text-chart-danger border-chart-danger/30', emoji: '🔴' };
   };
 
-  const handleExportCSV = () => {
+  const handleExportExcel = () => {
     try {
-      exportToCSV(filteredAndSortedData, 'registros_glicemia_filtrados');
+      exportToExcel(filteredAndSortedData, 'registros_glicemia_filtrados');
       toast({
         title: "✅ Exportação realizada!",
-        description: `${filteredAndSortedData.length} registros exportados com sucesso.`,
+        description: `${filteredAndSortedData.length} registros exportados em Excel.`,
       });
     } catch (error) {
       toast({
@@ -74,14 +74,24 @@ export const GlucoseTable = ({ data }: GlucoseTableProps) => {
       return matchesSearch && matchesPeriod;
     });
 
-    // Ordenação
+    // Ordenação melhorada com data e hora combinadas
     filtered.sort((a, b) => {
       let aValue: any, bValue: any;
 
       switch (sortField) {
         case 'date':
-          aValue = a.date.getTime();
-          bValue = b.date.getTime();
+          // Combinar data e hora para ordenação cronológica precisa
+          const [hoursA, minutesA] = a.time.split(':').map(Number);
+          const [hoursB, minutesB] = b.time.split(':').map(Number);
+          
+          const datetimeA = new Date(a.date);
+          datetimeA.setHours(hoursA, minutesA, 0, 0);
+          
+          const datetimeB = new Date(b.date);
+          datetimeB.setHours(hoursB, minutesB, 0, 0);
+          
+          aValue = datetimeA.getTime();
+          bValue = datetimeB.getTime();
           break;
         case 'time':
           aValue = a.time;
@@ -140,14 +150,14 @@ export const GlucoseTable = ({ data }: GlucoseTableProps) => {
             📋 Registros Detalhados
           </CardTitle>
           <Button
-            onClick={handleExportCSV}
+            onClick={handleExportExcel}
             variant="outline"
             size="sm"
             className="bg-primary/10 border-primary/30 hover:bg-primary/20 text-primary"
             disabled={filteredAndSortedData.length === 0}
           >
             <Download className="h-4 w-4 mr-2" />
-            Exportar CSV
+            Exportar Excel
           </Button>
         </div>
         
