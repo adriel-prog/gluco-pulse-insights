@@ -196,6 +196,36 @@ export const GlucoseReport = ({ data }: GlucoseReportProps) => {
   const exportReport = () => {
     const report = generateReport();
     
+    // Classificar registros por padrões de refeição
+    const classifyMealPeriod = (reading: GlucoseReading) => {
+      const period = reading.period?.toLowerCase() || '';
+      let hour: number;
+      
+      if (reading.time) {
+        const timeMatch = reading.time.match(/(\d{1,2}):?\d{0,2}/);
+        hour = timeMatch ? parseInt(timeMatch[1]) : getHours(reading.date);
+      } else {
+        hour = getHours(reading.date);
+      }
+
+      // Classificação por período explícito
+      if (period.includes('jejum') || period.includes('antes')) return 'beforeMeals';
+      if (period.includes('após') || period.includes('depois') || period.includes('pós')) return 'afterMeals';
+      
+      // Classificação por horário (se não há período definido)
+      if (hour >= 6 && hour <= 8) return 'beforeMeals'; // Manhã em jejum
+      if (hour >= 8 && hour <= 10) return 'afterMeals'; // Após café
+      if (hour >= 11 && hour <= 12) return 'beforeMeals'; // Antes almoço
+      if (hour >= 13 && hour <= 15) return 'afterMeals'; // Após almoço
+      if (hour >= 17 && hour <= 19) return 'beforeMeals'; // Antes jantar
+      if (hour >= 19 && hour <= 21) return 'afterMeals'; // Após jantar
+      
+      return 'other';
+    };
+
+    const beforeMealsData = data.filter(r => classifyMealPeriod(r) === 'beforeMeals');
+    const afterMealsData = data.filter(r => classifyMealPeriod(r) === 'afterMeals');
+    
     // Criar planilhas
     const workbook = XLSX.utils.book_new();
 
@@ -222,7 +252,59 @@ export const GlucoseReport = ({ data }: GlucoseReportProps) => {
     const summarySheet = XLSX.utils.aoa_to_sheet(summaryData);
     XLSX.utils.book_append_sheet(workbook, summarySheet, 'Resumo');
 
-    // Planilha 2: Maiores Leituras
+    // Planilha 2: Antes das Refeições
+    const beforeMealsSheetData = [
+      ['REGISTROS ANTES DAS REFEIÇÕES'],
+      ['Data', 'Hora', 'Glicemia (mg/dL)', 'Período/Observação', 'Classificação'],
+      ...beforeMealsData
+        .sort((a, b) => b.date.getTime() - a.date.getTime()) // Mais recentes primeiro
+        .map(r => [
+          format(r.date, 'dd/MM/yyyy', { locale: ptBR }),
+          r.time || format(r.date, 'HH:mm', { locale: ptBR }),
+          r.glucose,
+          r.period || 'Classificado por horário',
+          r.period?.toLowerCase().includes('jejum') || r.period?.toLowerCase().includes('antes') 
+            ? 'Período explícito' 
+            : 'Horário de jejum/pré-refeição'
+        ]),
+      [''],
+      ['ESTATÍSTICAS'],
+      ['Total de registros:', beforeMealsData.length],
+      ['Média:', beforeMealsData.length > 0 ? (beforeMealsData.reduce((sum, r) => sum + r.glucose, 0) / beforeMealsData.length).toFixed(1) : 0],
+      ['Maior valor:', beforeMealsData.length > 0 ? Math.max(...beforeMealsData.map(r => r.glucose)) : 0],
+      ['Menor valor:', beforeMealsData.length > 0 ? Math.min(...beforeMealsData.map(r => r.glucose)) : 0],
+    ];
+
+    const beforeMealsSheet = XLSX.utils.aoa_to_sheet(beforeMealsSheetData);
+    XLSX.utils.book_append_sheet(workbook, beforeMealsSheet, 'Antes das Refeições');
+
+    // Planilha 3: Após as Refeições
+    const afterMealsSheetData = [
+      ['REGISTROS APÓS AS REFEIÇÕES'],
+      ['Data', 'Hora', 'Glicemia (mg/dL)', 'Período/Observação', 'Classificação'],
+      ...afterMealsData
+        .sort((a, b) => b.date.getTime() - a.date.getTime()) // Mais recentes primeiro
+        .map(r => [
+          format(r.date, 'dd/MM/yyyy', { locale: ptBR }),
+          r.time || format(r.date, 'HH:mm', { locale: ptBR }),
+          r.glucose,
+          r.period || 'Classificado por horário',
+          r.period?.toLowerCase().includes('após') || r.period?.toLowerCase().includes('depois') || r.period?.toLowerCase().includes('pós')
+            ? 'Período explícito' 
+            : 'Horário pós-refeição'
+        ]),
+      [''],
+      ['ESTATÍSTICAS'],
+      ['Total de registros:', afterMealsData.length],
+      ['Média:', afterMealsData.length > 0 ? (afterMealsData.reduce((sum, r) => sum + r.glucose, 0) / afterMealsData.length).toFixed(1) : 0],
+      ['Maior valor:', afterMealsData.length > 0 ? Math.max(...afterMealsData.map(r => r.glucose)) : 0],
+      ['Menor valor:', afterMealsData.length > 0 ? Math.min(...afterMealsData.map(r => r.glucose)) : 0],
+    ];
+
+    const afterMealsSheet = XLSX.utils.aoa_to_sheet(afterMealsSheetData);
+    XLSX.utils.book_append_sheet(workbook, afterMealsSheet, 'Após as Refeições');
+
+    // Planilha 4: Maiores Leituras
     const highestData = [
       ['MAIORES LEITURAS'],
       ['Data', 'Hora', 'Glicemia (mg/dL)', 'Período'],
@@ -237,7 +319,7 @@ export const GlucoseReport = ({ data }: GlucoseReportProps) => {
     const highestSheet = XLSX.utils.aoa_to_sheet(highestData);
     XLSX.utils.book_append_sheet(workbook, highestSheet, 'Maiores Leituras');
 
-    // Planilha 3: Menores Leituras
+    // Planilha 5: Menores Leituras
     const lowestData = [
       ['MENORES LEITURAS'],
       ['Data', 'Hora', 'Glicemia (mg/dL)', 'Período'],
