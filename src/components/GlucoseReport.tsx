@@ -37,7 +37,7 @@ export const GlucoseReport = ({ data }: GlucoseReportProps) => {
       };
     }
 
-    // Análise por horário
+    // Análise por horário - usar time string se disponível, senão usar date
     const hourlyData: { [key: number]: number[] } = {};
     for (let i = 0; i < 24; i++) {
       hourlyData[i] = [];
@@ -50,14 +50,23 @@ export const GlucoseReport = ({ data }: GlucoseReportProps) => {
     }
 
     data.forEach(reading => {
-      const hour = getHours(reading.date);
+      let hour: number;
+      
+      // Tentar extrair hora do campo time primeiro, depois da data
+      if (reading.time) {
+        const timeMatch = reading.time.match(/(\d{1,2}):?\d{0,2}/);
+        hour = timeMatch ? parseInt(timeMatch[1]) : getHours(reading.date);
+      } else {
+        hour = getHours(reading.date);
+      }
+      
       const day = getDay(reading.date);
       
       hourlyData[hour].push(reading.glucose);
       dailyData[day].push(reading.glucose);
     });
 
-    // Calcular médias por horário
+    // Calcular médias por horário e ordenar por maior quantidade de registros primeiro, depois por média
     const peakHours = Object.entries(hourlyData)
       .map(([hour, values]) => ({
         hour: parseInt(hour),
@@ -65,8 +74,12 @@ export const GlucoseReport = ({ data }: GlucoseReportProps) => {
         count: values.length,
       }))
       .filter(item => item.count > 0)
-      .sort((a, b) => b.average - a.average)
-      .slice(0, 5);
+      .sort((a, b) => {
+        // Primeiro ordenar por quantidade de registros, depois por média
+        if (a.count !== b.count) return b.count - a.count;
+        return b.average - a.average;
+      })
+      .slice(0, 8); // Mostrar mais horários relevantes
 
     // Calcular médias por dia da semana
     const dayNames = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
@@ -80,18 +93,69 @@ export const GlucoseReport = ({ data }: GlucoseReportProps) => {
       .filter(item => item.count > 0)
       .sort((a, b) => b.average - a.average);
 
-    // Padrões de refeição (baseado no período)
-    const beforeMeals = data.filter(r => r.period?.toLowerCase().includes('jejum') || r.period?.toLowerCase().includes('antes'));
-    const afterMeals = data.filter(r => r.period?.toLowerCase().includes('após') || r.period?.toLowerCase().includes('depois'));
+    // Padrões de refeição melhorados - análise por período e horário
+    const classifyMealPeriod = (reading: GlucoseReading) => {
+      const period = reading.period?.toLowerCase() || '';
+      let hour: number;
+      
+      if (reading.time) {
+        const timeMatch = reading.time.match(/(\d{1,2}):?\d{0,2}/);
+        hour = timeMatch ? parseInt(timeMatch[1]) : getHours(reading.date);
+      } else {
+        hour = getHours(reading.date);
+      }
+
+      // Classificação por período explícito
+      if (period.includes('jejum') || period.includes('antes')) return 'beforeMeals';
+      if (period.includes('após') || period.includes('depois') || period.includes('pós')) return 'afterMeals';
+      
+      // Classificação por horário (se não há período definido)
+      if (hour >= 6 && hour <= 8) return 'morningFasting'; // Manhã em jejum
+      if (hour >= 8 && hour <= 10) return 'afterBreakfast'; // Após café
+      if (hour >= 11 && hour <= 12) return 'beforeLunch'; // Antes almoço
+      if (hour >= 13 && hour <= 15) return 'afterLunch'; // Após almoço
+      if (hour >= 17 && hour <= 19) return 'beforeDinner'; // Antes jantar
+      if (hour >= 19 && hour <= 21) return 'afterDinner'; // Após jantar
+      if (hour >= 22 || hour <= 5) return 'nightTime'; // Madrugada
+      
+      return 'other';
+    };
+
+    const mealCategories = {
+      beforeMeals: [] as number[],
+      afterMeals: [] as number[],
+      morningFasting: [] as number[],
+      afterBreakfast: [] as number[],
+      beforeLunch: [] as number[],
+      afterLunch: [] as number[],
+      beforeDinner: [] as number[],
+      afterDinner: [] as number[],
+      nightTime: [] as number[],
+      other: [] as number[]
+    };
+
+    data.forEach(reading => {
+      const category = classifyMealPeriod(reading);
+      mealCategories[category].push(reading.glucose);
+    });
 
     const mealPatterns = {
       beforeMeals: {
-        average: beforeMeals.length > 0 ? beforeMeals.reduce((sum, r) => sum + r.glucose, 0) / beforeMeals.length : 0,
-        count: beforeMeals.length,
+        average: mealCategories.beforeMeals.length > 0 ? 
+          mealCategories.beforeMeals.reduce((sum, val) => sum + val, 0) / mealCategories.beforeMeals.length : 
+          (mealCategories.morningFasting.length > 0 ? 
+            mealCategories.morningFasting.reduce((sum, val) => sum + val, 0) / mealCategories.morningFasting.length : 0),
+        count: mealCategories.beforeMeals.length || mealCategories.morningFasting.length,
       },
       afterMeals: {
-        average: afterMeals.length > 0 ? afterMeals.reduce((sum, r) => sum + r.glucose, 0) / afterMeals.length : 0,
-        count: afterMeals.length,
+        average: mealCategories.afterMeals.length > 0 ? 
+          mealCategories.afterMeals.reduce((sum, val) => sum + val, 0) / mealCategories.afterMeals.length :
+          ([...mealCategories.afterBreakfast, ...mealCategories.afterLunch, ...mealCategories.afterDinner].length > 0 ?
+            [...mealCategories.afterBreakfast, ...mealCategories.afterLunch, ...mealCategories.afterDinner]
+              .reduce((sum, val) => sum + val, 0) / 
+            [...mealCategories.afterBreakfast, ...mealCategories.afterLunch, ...mealCategories.afterDinner].length : 0),
+        count: mealCategories.afterMeals.length || 
+          (mealCategories.afterBreakfast.length + mealCategories.afterLunch.length + mealCategories.afterDinner.length),
       },
     };
 
