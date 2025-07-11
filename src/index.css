@@ -99,6 +99,12 @@ All colors MUST be HSL.
     --sidebar-border: 220 13% 91%;
 
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Mobile optimizations */
+    --mobile-header-height: 3.5rem;
+    --mobile-tab-height: 3rem;
+    --mobile-spacing: 1rem;
+    --touch-target: 44px;
   }
 
   .dark {
@@ -347,5 +353,100 @@ All colors MUST be HSL.
   /* Smooth Transitions */
   .smooth-transition {
     transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  /* Mobile-specific utilities */
+  .mobile-container {
+    @apply px-4 sm:px-6 lg:px-8;
+  }
+
+  .mobile-grid {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6;
+  }
+
+  .mobile-tabs {
+    @apply overflow-x-auto scrollbar-hide pb-1;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .mobile-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .mobile-tab-trigger {
+    @apply flex-shrink-0 min-w-max px-4 py-2 text-sm font-medium rounded-xl 
+    data-[state=active]:bg-primary data-[state=active]:text-primary-foreground 
+    smooth-transition whitespace-nowrap;
+  }
+
+  .mobile-card {
+    @apply card-modern p-4 hover-lift;
+  }
+
+  .mobile-stat-card {
+    @apply mobile-card min-h-[120px] flex flex-col justify-between;
+  }
+
+  .mobile-metric {
+    @apply text-2xl sm:text-3xl font-bold;
+  }
+
+  .mobile-text {
+    @apply text-sm sm:text-base;
+  }
+
+  .mobile-button {
+    @apply min-h-[var(--touch-target)] min-w-[var(--touch-target)] 
+    flex items-center justify-center rounded-xl transition-all duration-200;
+  }
+
+  .mobile-drawer-overlay {
+    @apply fixed inset-0 bg-black/50 backdrop-blur-sm z-40;
+  }
+
+  .mobile-drawer {
+    @apply fixed bottom-0 left-0 right-0 bg-card border-t border-border 
+    rounded-t-2xl p-4 z-50 max-h-[80vh] overflow-y-auto;
+  }
+
+  .mobile-safe-area {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* Touch-friendly interactions */
+  .touch-target {
+    min-height: var(--touch-target);
+    min-width: var(--touch-target);
+  }
+
+  /* Mobile navigation */
+  .mobile-nav {
+    @apply fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-md 
+    border-t border-border z-30 mobile-safe-area;
+  }
+
+  .mobile-nav-item {
+    @apply flex flex-col items-center justify-center p-2 text-xs font-medium
+    text-muted-foreground active:scale-95 transition-all duration-200;
+  }
+
+  .mobile-nav-item.active {
+    @apply text-primary;
+  }
+
+  /* Responsive utilities */
+  @media (max-width: 640px) {
+    .mobile-hide {
+      display: none;
+    }
+    
+    .mobile-stack {
+      @apply flex flex-col space-y-3;
+    }
+    
+    .mobile-full {
+      @apply w-full;
+    }
   }
 }

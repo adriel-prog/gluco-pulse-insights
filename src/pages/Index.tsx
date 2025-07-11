@@ -1,8 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { GlucoseChart } from '@/components/GlucoseChart';
 import { GlucoseInsights } from '@/components/GlucoseInsights';
 import { GlucoseDistribution } from '@/components/GlucoseDistribution';
@@ -12,21 +11,26 @@ import { GlucoseMetrics } from '@/components/GlucoseMetrics';
 import { GlucoseHeatmap } from '@/components/GlucoseHeatmap';
 import { GlucoseRecommendations } from '@/components/GlucoseRecommendations';
 import { DateRangeFilter } from '@/components/DateRangeFilter';
-import { Activity, TrendingUp, AlertTriangle, Calendar, BarChart3, Brain } from 'lucide-react';
-import { ThemeToggle } from '@/components/ThemeToggle';
+import { MobileNavigation } from '@/components/MobileNavigation';
+import { MobileStatsCards } from '@/components/MobileStatsCards';
+import { MobileHeader } from '@/components/MobileHeader';
+import { Activity } from 'lucide-react';
 import { fetchGlucoseData, type GlucoseReading } from '@/utils/dataService';
 import { isAfter, isBefore } from 'date-fns';
 import { GlucoseReport } from '@/components/GlucoseReport';
+import { cn } from '@/lib/utils';
 
 const Index = () => {
   const [glucoseData, setGlucoseData] = useState<GlucoseReading[]>([]);
   const [loading, setLoading] = useState(true);
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
+  const [activeTab, setActiveTab] = useState('overview');
   const [dateFilter, setDateFilter] = useState<{start: Date | null, end: Date | null}>({
     start: null,
     end: null
   });
   const { toast } = useToast();
+  const isMobile = useIsMobile();
 
   // Filter data based on date range
   const filteredData = useMemo(() => {
@@ -103,40 +107,19 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background relative">      
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
-        {/* Modern Header */}
-        <div className="mb-8 animate-fade-in">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-gradient-to-br from-primary to-accent rounded-2xl shadow-lg hover-lift">
-                <Activity className="text-white h-8 w-8" />
-              </div>
-              <div>
-                <h1 className="text-3xl sm:text-4xl font-bold gradient-health">
-                  GlucoPulse Insights
-                </h1>
-                <p className="text-muted-foreground text-lg">
-                  Monitoramento inteligente de glicemia
-                </p>
-              </div>
-            </div>
-            <ThemeToggle />
-          </div>
-          
-          {lastUpdate && (
-            <div className="flex flex-wrap items-center gap-3 mb-6">
-              <Badge variant="outline" className="glass-subtle border-primary/30 px-3 py-1.5">
-                <Calendar className="w-3 h-3 mr-2" />
-                {lastUpdate.toLocaleTimeString('pt-BR')}
-              </Badge>
-              <Badge className="bg-gradient-to-r from-success to-success/80 text-white border-0 px-3 py-1.5">
-                <Activity className="w-3 h-3 mr-2" />
-                {glucoseData.length} registros
-              </Badge>
-            </div>
-          )}
-        </div>
+    <div className={cn(
+      "min-h-screen bg-background relative",
+      isMobile && "pb-20" // Add bottom padding for mobile navigation
+    )}>      
+      <div className={cn(
+        "container mx-auto relative z-10",
+        isMobile ? "mobile-container py-4" : "px-4 sm:px-6 lg:px-8 py-8"
+      )}>
+        {/* Mobile Header */}
+        <MobileHeader 
+          lastUpdate={lastUpdate}
+          totalRecords={glucoseData.length}
+        />
 
         {/* Date Range Filter */}
         <DateRangeFilter 
@@ -145,115 +128,77 @@ const Index = () => {
           filteredRecords={filteredData.length}
         />
 
-        {/* Modern Stats Cards */}
+        {/* Stats Cards */}
         {stats && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8 animate-slide-up">
-            <Card className="card-floating hover-lift group">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-                <CardTitle className="text-base font-semibold text-card-foreground">
-                  Média Geral
-                </CardTitle>
-                <div className="p-2 bg-primary/10 text-primary rounded-xl">
-                  <TrendingUp className="h-5 w-5" />
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-primary mb-1">
-                  {stats.average.toFixed(0)} <span className="text-lg text-muted-foreground">mg/dL</span>
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  {stats.average < 140 ? '✓ Dentro da meta' : '⚠ Acima da meta'}
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="card-floating hover-lift group">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-                <CardTitle className="text-base font-semibold text-card-foreground">
-                  Total de Registros
-                </CardTitle>
-                <div className="p-2 bg-success/10 text-success rounded-xl">
-                  <Activity className="h-5 w-5" />
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-success mb-1">
-                  {stats.total}
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Dados para análise
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="card-floating hover-lift group">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-                <CardTitle className="text-base font-semibold text-card-foreground">
-                  Pico Máximo
-                </CardTitle>
-                <div className="p-2 bg-danger/10 text-danger rounded-xl">
-                  <AlertTriangle className="h-5 w-5" />
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-danger mb-1">
-                  {stats.max} <span className="text-lg text-muted-foreground">mg/dL</span>
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Valor mais alto
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="card-floating hover-lift group">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-                <CardTitle className="text-base font-semibold text-card-foreground">
-                  Menor Valor
-                </CardTitle>
-                <div className="p-2 bg-accent/10 text-accent rounded-xl">
-                  <Calendar className="h-5 w-5" />
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-accent mb-1">
-                  {stats.min} <span className="text-lg text-muted-foreground">mg/dL</span>
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Registro mínimo
-                </p>
-              </CardContent>
-            </Card>
-          </div>
+          <MobileStatsCards 
+            stats={stats} 
+            className="mb-6 animate-slide-up"
+          />
         )}
 
-        {/* Modern Navigation */}
-        <Tabs defaultValue="overview" className="w-full animate-scale-in">
-          <TabsList className="grid w-full grid-cols-3 sm:grid-cols-7 mb-8 glass-subtle h-14 p-1 rounded-2xl">
-            <TabsTrigger value="overview" className="text-sm font-medium rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground smooth-transition">
-              📊 Overview
-            </TabsTrigger>
-            <TabsTrigger value="metrics" className="text-sm font-medium rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground smooth-transition">
-              🎯 Métricas
-            </TabsTrigger>
-            <TabsTrigger value="patterns" className="text-sm font-medium rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground smooth-transition">
-              🔥 Padrões
-            </TabsTrigger>
-            <TabsTrigger value="report" className="text-sm font-medium rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground smooth-transition">
-              📋 Relatório
-            </TabsTrigger>
-            <TabsTrigger value="table" className="text-sm font-medium rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground smooth-transition">
-              📋 Tabela
-            </TabsTrigger>
-            <TabsTrigger value="calendar" className="text-sm font-medium rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground smooth-transition">
-              📅 Calendário
-            </TabsTrigger>
-            <TabsTrigger value="insights" className="text-sm font-medium rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground smooth-transition">
-              🧠 Insights
-            </TabsTrigger>
-          </TabsList>
+        {/* Navigation and Content */}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full animate-scale-in">
+          {/* Desktop Navigation */}
+          {!isMobile && (
+            <TabsList className="grid w-full grid-cols-3 sm:grid-cols-7 mb-8 glass-subtle h-14 p-1 rounded-2xl">
+              <TabsTrigger value="overview" className="mobile-tab-trigger">
+                📊 Overview
+              </TabsTrigger>
+              <TabsTrigger value="metrics" className="mobile-tab-trigger">
+                🎯 Métricas
+              </TabsTrigger>
+              <TabsTrigger value="patterns" className="mobile-tab-trigger">
+                🔥 Padrões
+              </TabsTrigger>
+              <TabsTrigger value="report" className="mobile-tab-trigger">
+                📋 Relatório
+              </TabsTrigger>
+              <TabsTrigger value="table" className="mobile-tab-trigger">
+                📋 Tabela
+              </TabsTrigger>
+              <TabsTrigger value="calendar" className="mobile-tab-trigger">
+                📅 Calendário
+              </TabsTrigger>
+              <TabsTrigger value="insights" className="mobile-tab-trigger">
+                🧠 Insights
+              </TabsTrigger>
+            </TabsList>
+          )}
 
-          <TabsContent value="overview" className="space-y-6 animate-fade-in">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Mobile Horizontal Scrollable Navigation */}
+          {isMobile && (
+            <div className="mobile-tabs mb-4">
+              <TabsList className="inline-flex h-12 items-center justify-start rounded-xl bg-muted p-1 text-muted-foreground w-max">
+                <TabsTrigger value="overview" className="mobile-tab-trigger">
+                  📊 Overview
+                </TabsTrigger>
+                <TabsTrigger value="metrics" className="mobile-tab-trigger">
+                  🎯 Métricas
+                </TabsTrigger>
+                <TabsTrigger value="patterns" className="mobile-tab-trigger">
+                  🔥 Padrões
+                </TabsTrigger>
+                <TabsTrigger value="report" className="mobile-tab-trigger">
+                  📋 Relatório
+                </TabsTrigger>
+                <TabsTrigger value="table" className="mobile-tab-trigger">
+                  📋 Tabela
+                </TabsTrigger>
+                <TabsTrigger value="calendar" className="mobile-tab-trigger">
+                  📅 Calendário
+                </TabsTrigger>
+                <TabsTrigger value="insights" className="mobile-tab-trigger">
+                  🧠 Insights
+                </TabsTrigger>
+              </TabsList>
+            </div>
+          )}
+
+          <TabsContent value="overview" className="space-y-4 sm:space-y-6 animate-fade-in">
+            <div className={cn(
+              "grid gap-4 sm:gap-6",
+              isMobile ? "grid-cols-1" : "grid-cols-1 lg:grid-cols-2"
+            )}>
               <GlucoseChart data={filteredData} />
               <GlucoseDistribution data={filteredData} />
             </div>
@@ -284,6 +229,14 @@ const Index = () => {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Mobile Bottom Navigation */}
+      {isMobile && (
+        <MobileNavigation 
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+        />
+      )}
     </div>
   );
 };

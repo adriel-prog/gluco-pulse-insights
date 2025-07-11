@@ -6,6 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { Calendar, Filter, X } from 'lucide-react';
 import { format, subDays, subMonths, startOfMonth, endOfMonth, isAfter, isBefore } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { useIsMobile } from "@/hooks/use-mobile";
+import { cn } from '@/lib/utils';
 
 interface DateRangeFilterProps {
   onFilterChange: (startDate: Date | null, endDate: Date | null) => void;
@@ -15,6 +17,7 @@ interface DateRangeFilterProps {
 
 export const DateRangeFilter = ({ onFilterChange, totalRecords, filteredRecords }: DateRangeFilterProps) => {
   const [selectedPeriod, setSelectedPeriod] = useState<string>('all');
+  const isMobile = useIsMobile();
 
   const handlePeriodChange = (period: string) => {
     setSelectedPeriod(period);
@@ -62,19 +65,52 @@ export const DateRangeFilter = ({ onFilterChange, totalRecords, filteredRecords 
   };
 
   return (
-    <Card className="card-modern glass-effect mb-8 border border-primary/20">
-      <CardContent className="p-6">
-        <div className="flex flex-col sm:flex-row gap-6 items-start sm:items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-primary/20 rounded-lg backdrop-blur-sm">
-                <Filter className="h-5 w-5 text-primary" />
+    <Card className={cn(
+      "card-modern glass-effect border border-primary/20",
+      isMobile ? "mb-4" : "mb-8"
+    )}>
+      <CardContent className={cn(isMobile ? "p-4" : "p-6")}>
+        <div className={cn(
+          "gap-4 items-start justify-between",
+          isMobile ? "flex flex-col space-y-4" : "flex flex-col sm:flex-row gap-6 sm:items-center"
+        )}>
+          <div className={cn(
+            "gap-3",
+            isMobile ? "flex flex-col space-y-3" : "flex items-center gap-4"
+          )}>
+            <div className={cn(
+              "flex items-center gap-3",
+              isMobile && "justify-between"
+            )}>
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="p-2 bg-primary/20 rounded-lg backdrop-blur-sm">
+                  <Filter className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+                </div>
+                <span className={cn(
+                  "font-semibold text-foreground",
+                  isMobile ? "text-base" : "text-lg"
+                )}>
+                  {isMobile ? "Período:" : "Filtro de Período:"}
+                </span>
               </div>
-              <span className="font-semibold text-foreground text-lg">Filtro de Período:</span>
+              
+              {isMobile && selectedPeriod !== 'all' && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={clearFilter}
+                  className="border-border/50 hover:bg-accent/20 hover:border-accent/50 smooth-transition touch-target"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              )}
             </div>
             
             <Select value={selectedPeriod} onValueChange={handlePeriodChange}>
-              <SelectTrigger className="w-52 bg-background/80 backdrop-blur-sm border-border/50 hover:border-primary/50 smooth-transition">
+              <SelectTrigger className={cn(
+                "bg-background/80 backdrop-blur-sm border-border/50 hover:border-primary/50 smooth-transition touch-target",
+                isMobile ? "w-full" : "w-52"
+              )}>
                 <SelectValue placeholder="Selecionar período" />
               </SelectTrigger>
               <SelectContent className="bg-background/95 backdrop-blur-md border-border/50">
@@ -87,7 +123,7 @@ export const DateRangeFilter = ({ onFilterChange, totalRecords, filteredRecords 
               </SelectContent>
             </Select>
 
-            {selectedPeriod !== 'all' && (
+            {!isMobile && selectedPeriod !== 'all' && (
               <Button
                 variant="outline"
                 size="sm"
@@ -100,13 +136,29 @@ export const DateRangeFilter = ({ onFilterChange, totalRecords, filteredRecords 
             )}
           </div>
 
-          <div className="flex items-center gap-4">
-            <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30 px-4 py-2 backdrop-blur-sm">
-              <Calendar className="h-4 w-4 mr-2" />
-              {getPeriodLabel(selectedPeriod)}
+          <div className={cn(
+            "gap-3",
+            isMobile ? "flex flex-col space-y-2" : "flex items-center gap-4"
+          )}>
+            <Badge 
+              variant="outline" 
+              className={cn(
+                "bg-primary/10 text-primary border-primary/30 backdrop-blur-sm",
+                isMobile ? "px-3 py-2 justify-center" : "px-4 py-2"
+              )}
+            >
+              <Calendar className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
+              <span className={cn(isMobile && "text-xs")}>
+                {getPeriodLabel(selectedPeriod)}
+              </span>
             </Badge>
             
-            <Badge className="bg-gradient-to-r from-secondary to-muted text-secondary-foreground px-4 py-2 font-medium">
+            <Badge 
+              className={cn(
+                "bg-gradient-to-r from-secondary to-muted text-secondary-foreground font-medium",
+                isMobile ? "px-3 py-2 justify-center text-xs" : "px-4 py-2"
+              )}
+            >
               {filteredRecords} de {totalRecords} registros
             </Badge>
           </div>

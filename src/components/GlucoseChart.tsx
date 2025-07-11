@@ -5,12 +5,15 @@ import { GlucoseReading } from '@/utils/dataService';
 import { format, subDays, isWithinInterval, parse, compareAsc } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { TrendingUp } from 'lucide-react';
+import { useIsMobile } from "@/hooks/use-mobile";
+import { cn } from '@/lib/utils';
 
 interface GlucoseChartProps {
   data: GlucoseReading[];
 }
 
 export const GlucoseChart = ({ data }: GlucoseChartProps) => {
+  const isMobile = useIsMobile();
   // Filtrar dados dos últimos 7 dias
   const sevenDaysAgo = subDays(new Date(), 7);
   const recentData = data.filter(reading => 
@@ -57,18 +60,24 @@ export const GlucoseChart = ({ data }: GlucoseChartProps) => {
 
   return (
     <Card className="card-modern hover-lift">
-      <CardHeader>
-        <CardTitle className="text-xl font-semibold text-card-foreground flex items-center gap-2">
-          <TrendingUp className="w-5 h-5 text-primary" />
-          Tendência dos Últimos 7 Dias
+      <CardHeader className={cn(isMobile && "pb-3")}>
+        <CardTitle className={cn(
+          "font-semibold text-card-foreground flex items-center gap-2",
+          isMobile ? "text-lg" : "text-xl"
+        )}>
+          <TrendingUp className={cn(isMobile ? "w-4 h-4" : "w-5 h-5", "text-primary")} />
+          {isMobile ? "Últimos 7 Dias" : "Tendência dos Últimos 7 Dias"}
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="h-80">
+      <CardContent className={cn(isMobile && "p-4")}>
+        <div className={cn(isMobile ? "h-64" : "h-80")}>
           <ResponsiveContainer width="100%" height="100%">
             <LineChart 
               data={chartData}
-              margin={{ top: 5, right: 30, left: 20, bottom: 80 }}
+              margin={isMobile 
+                ? { top: 5, right: 10, left: 10, bottom: 60 }
+                : { top: 5, right: 30, left: 20, bottom: 80 }
+              }
             >
               {/* Grid mais sutil e elegante */}
               <CartesianGrid 

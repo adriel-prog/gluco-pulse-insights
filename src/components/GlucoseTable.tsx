@@ -4,6 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { cn } from '@/lib/utils';
 import {
   Table,
   TableBody,
@@ -28,6 +30,7 @@ type SortDirection = 'asc' | 'desc';
 
 export const GlucoseTable = ({ data }: GlucoseTableProps) => {
   const { toast } = useToast();
+  const isMobile = useIsMobile();
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [sortField, setSortField] = useState<SortField>('date');
